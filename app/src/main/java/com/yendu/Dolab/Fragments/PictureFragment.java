@@ -619,16 +619,27 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
 //        Cursor c;
         if (id == 100) {
-            Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
+           // Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Uri uri=MediaStore.Files.getContentUri("external");
             String order = Sorted ? "ASC" : "DESC";
+            String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                    + " OR "
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.SIZE, MediaStore.Images.ImageColumns.WIDTH, MediaStore.Images.ImageColumns.HEIGHT};
-                return new CursorLoader(getContext(), uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " " + order);
+               // String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.SIZE, MediaStore.Images.ImageColumns.WIDTH, MediaStore.Images.ImageColumns.HEIGHT};
+               String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
+               // return new CursorLoader(getContext(), uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " " + order);
+                return new CursorLoader(getContext(), uri, projection, selection, null, MediaStore.Files.FileColumns.DATE_TAKEN + " " + order);
+
             } else {
-                String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.SIZE,};
-                return new CursorLoader(getContext(), uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " " + order);
+               // String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.SIZE,};
+                String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
+                return new CursorLoader(getContext(), uri, projection, selection, null, MediaStore.Files.FileColumns.DATE_TAKEN + " " + order);
+
+//                return new CursorLoader(getContext(), uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " " + order);
             }
         }
         return null;
