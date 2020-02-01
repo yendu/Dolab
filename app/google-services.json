@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "973503978117",
+    "firebase_url": "https://dolab-1a373.firebaseio.com",
+    "project_id": "dolab-1a373",
+    "storage_bucket": "dolab-1a373.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973503978117:android:e9d241d64d9bd020ac27ec",
+        "android_client_info": {
+          "package_name": "com.yendu.Dolab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "973503978117-vtnqab194ukik8klvejhpb11f7b6qiq7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yendu.Dolab",
+            "certificate_hash": "a23d5b4271c1cd2a361d80b6829411cc0f3925ca"
+          }
+        },
+        {
+          "client_id": "973503978117-7462btgn7u99p3m7p0cqjqhlbei1lh6d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPuj8SLMF2vmHiiE914QcV6XK1FLHlcSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "973503978117-7462btgn7u99p3m7p0cqjqhlbei1lh6d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

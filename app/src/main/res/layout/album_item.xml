@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginRight="2dp"
+    android:layout_marginBottom="2dp"
+
+    >
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+
+      >
+
+  <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="150dp"
+      android:id="@+id/album_image_view"
+      android:padding="0dp"
+      android:scaleType="centerCrop"
+
+
+      android:src="@drawable/ic_launcher_background"
+      >
+
+
+
+  </ImageView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:visibility="visible"
+        android:background="#10000000"
+
+      >
+<!--   "-->
+<!--        >-->
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:background="#60000000"
+          android:padding="5dp"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentBottom="true"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="#000"
+            android:shadowRadius="7.0"
+
+            android:textColor="#ffffff"
+          android:textSize="14sp"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+          android:ellipsize="end"
+          android:id="@+id/album_names_text_view"/>
+        <TextView
+            android:id="@+id/images_count_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="#000"
+            android:layout_alignParentRight="true"
+            android:shadowRadius="7.0"
+            android:layout_gravity="end"
+            android:textColor="#ffffff"
+            android:textSize="13sp"
+            android:text="40"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"/>
+
+
+      </RelativeLayout>
+
+    </RelativeLayout>
+
+  </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_marginBottom="0.5dp"
+    android:id="@+id/image_container"
+    android:padding="1dp"
+
+
+
+    >
+
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginTop="1dp"-->
+<!--        android:layout_marginLeft=".5dp"-->
+<!--        android:layout_marginRight=".5dp"-->
+<!--        android:layout_marginBottom=".5dp"-->
+<!--        app:cardCornerRadius="1dp">-->
+
+<!--        <FrameLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+            <ImageView
+                android:id="@+id/picture_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+
+
+                tools:ignore="ContentDescription" />
+
+<!--          <CheckBox-->
+<!--              android:layout_width="wrap_content"-->
+<!--              android:layout_height="wrap_content"-->
+<!--              android:checked="false"-->
+<!--              android:visibility="invisible"-->
+<!--              />-->
+    <!--    <androidx.appcompat.widget.AppCompatCheckBox-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+
+<!--        android:checked="true"-->
+<!--        />-->
+
+
+<!--        </FrameLayout>-->
+
+
+<!--    </androidx.cardview.widget.CardView>-->
+
+</FrameLayout>

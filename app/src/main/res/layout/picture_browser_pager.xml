@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/container_picture_browser_pager"
+    android:clickable="true"
+    android:focusable="true"
+   >
+
+<!--    <ImageView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+
+<!--        android:id="@+id/image_browser_pager" />-->
+    <com.github.chrisbanes.photoview.PhotoView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/image_browser_pager"/>
+<!--       <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView-->
+<!--           android:layout_width="match_parent"-->
+<!--           android:layout_height="match_parent"-->
+<!--           android:id="@+id/image_browser_pager"/>-->
+
+<!--    <com.ortiz.touchview.TouchImageView-->
+<!--        android:id="@+id/image_browser_pager"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:src="@drawable/ic_camera_alt_black_24dp"-->
+<!--        android:visibility="visible" />-->
+<!--    <com.jsibbold.zoomage.ZoomageView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:id="@+id/image_browser_pager"-->
+<!--        />-->
+    <!--android:transitionName="picture"
+    tools:ignore="ContentDescription,UnusedAttribute"-->
+
+
+</RelativeLayout>

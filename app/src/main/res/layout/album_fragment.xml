@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:id="@+id/albums_recycler_view_fragment"
+
+
+        >
+
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+    <com.futuremind.recyclerviewfastscroll.FastScroller
+        android:id="@+id/fastscroll_album"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="0dp"
+
+        android:orientation="vertical" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_album_found"
+        android:visibility="invisible"
+        android:layout_centerInParent="true"
+        android:id="@+id/album_fragment_no_album_text_view"
+        android:layout_gravity="center"/>
+
+    <ProgressBar
+        android:id="@+id/album_fragment_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+
+        />
+
+
+
+
+</RelativeLayout>

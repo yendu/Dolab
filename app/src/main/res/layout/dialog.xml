@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    >
+
+
+<!--    >-->
+
+
+
+    <TextView
+        android:id="@+id/dialog_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CREATE TAG"
+        android:textSize="16sp"
+        android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+        />
+    <EditText
+        android:id="@+id/dialog_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+
+        android:scrollHorizontally="true"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <Spinner
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:gravity="right"
+        android:id="@+id/spinner_toolbar_dialog"/>
+    <ImageButton
+        android:id="@+id/mic_button_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_keyboard_voice_black_second_24dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        >
+
+        <TextView
+            android:id="@+id/cancel_dialog_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CANCEL"
+
+
+            android:clickable="true"
+            android:focusable="true"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+            android:layout_margin="4dp"
+          />
+        <TextView
+            android:layout_margin="4dp"
+            android:id="@+id/ok_dialog_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+
+            android:clickable="true"
+            android:focusable="true"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+
+            />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
