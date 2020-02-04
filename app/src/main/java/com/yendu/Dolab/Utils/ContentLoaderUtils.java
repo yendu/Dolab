@@ -10,6 +10,7 @@ import android.os.Build;
 import android.provider.MediaStore;
 //import android.text.style.TtsSpan;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import com.yendu.Dolab.Models.AlbumModel;
@@ -150,32 +151,47 @@ public class ContentLoaderUtils {
 
     public static List<PictureModel> getAllImagesFromFolder(Context context, String path) {
 
-      String searchParams;
+     // String searchParams;
         List<PictureModel> tempPicturesList = new ArrayList<>();
-//        MediaMetadataRetriever mediaMetadataRetriever=new MediaMetadataRetriever();
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
+//        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Uri uri=MediaStore.Files.getContentUri("external");
+        String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                + " OR "
+                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
         String bucket=path.substring(path.lastIndexOf("/")+1);
 
-        searchParams = "bucket_display_name = \"" + bucket + "\"";
+       // searchParams = "bucket_display_name = \"" + bucket + "\"";
 //        Cursor mPhotoCursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, searchParams, null, orderBy + " DESC");
 //
 //        String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.SIZE,MediaStore.Images.ImageColumns.DATE_ADDED};
         Cursor c;
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
+
+      /*  if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
             String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_ADDED,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
             c = context.getContentResolver().query(uri, projection, MediaStore.Images.Media.DATA + " like ?", new String[]{"%" + path + "%"}, MediaStore.Images.ImageColumns.DATE_ADDED+" DESC");
         }else{
             String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_ADDED,MediaStore.Images.ImageColumns.SIZE,};
             c = context.getContentResolver().query(uri, projection, MediaStore.Images.Media.DATA + " like ?", new String[]{"%" + path + "%"}, MediaStore.Images.ImageColumns.DATE_ADDED+" DESC");
-        }
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
-            String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
-            c = context.getContentResolver().query(uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucket},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
-        }else{
-            String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
-            c = context.getContentResolver().query(uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?",new String[]{bucket}, MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
-        }
+        }*/
+//        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
+//            String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DISPLAY_NAME, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT};
+//
+//
+//            //            String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
+//            c = context.getContentResolver().query(uri, projection, "("+selection+") AND ("+MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" = ?"+")", new String[]{bucket},MediaStore.Files.FileColumns.DATE_TAKEN+" DESC");
+//
+//            //c = context.getContentResolver().query(uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucket},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
+//        }else{
+            String[] projection = {MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.MEDIA_TYPE,MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME};
+
+            // String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
+            c = context.getContentResolver().query(uri, projection, "("+selection+") AND ("+MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" = ?"+")", new String[]{bucket},null);
+
+            // c = context.getContentResolver().query(uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?",new String[]{bucket}, MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
+//        }
 
 
 
@@ -184,62 +200,42 @@ public class ContentLoaderUtils {
 
             while (c.moveToNext()) {
                 PictureModel pictureModel = new PictureModel();
-//                String picPath = c.getString(0);
-//                String title = c.getString(1);
-//
-//
-//                //    String name=c.getString(1);
-//
-////                mediaMetadataRetriever.setDataSource(path);
-////                audioModel.setAlbumArt(mediaMetadataRetriever.getEmbeddedPicture());
-////                String name=path.substring(path.lastIndexOf("/")+1,path.lastIndexOf("."));
-////                if(name.contains("_")){
-////                    String artits=name.substring(0,name.indexOf("_"));
-////                    String album=name.substring(0,name.lastIndexOf("_"));
-////                    audioModel.setArtist(artits);
-////                    audioModel.setAlbum(album);
-////                }
-//
-//                pictureModel.setPath(picPath);
-////                if(title.contains(".")){
-////                    pictureModel.setName(title.substring(0,title.lastIndexOf(".")));
-////                }else{
-//                    pictureModel.setName(title);
-////                }
-//
-//                pictureModel.setSize(c.getString(2));
+
 
                 String picPath = c.getString(0);
-                String title = c.getString(1);
-                String folder = c.getString(2);
+                int media_type=c.getInt(1);
+                String title = c.getString(2);
+               // String folder = c.getString(2);
 
-                String dateAdded=convertDate(c.getString(3),DATEFORMAT);
+                //String dateAdded=convertDate(c.getString(3),DATEFORMAT);
 //                String dateAdded=c.getString(3);
-                Log.d("asdfasdfasdf",c.getString(3));
-                String size=c.getString(4);
+               // Log.d("asdfasdfasdf",c.getString(3));
+               // String size=c.getString(4);
 
 
 
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
+              /*  if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
                     String width=c.getString(5);
                     String height=c.getString(6);
                     pictureModel.setWidth(width);
                     pictureModel.setHeight(height);
-                }
+                }*/
 
 //                String ss=c.getString(7);
 
 
                 pictureModel.setPath(picPath);
+                pictureModel.setMedia_type(media_type);
+
 //                if(title.contains(".")){
 //                    realTitle=title.substring(0,title.lastIndexOf("."));
 //                    pictureModel.setName(realTitle);
 //                }else{
                 pictureModel.setName(title);
 //                }
-                pictureModel.setSize(calculateSize(size));
+              //  pictureModel.setSize(calculateSize(size));
 
-                pictureModel.setDate(dateAdded);
+                //pictureModel.setDate(dateAdded);
 
 //                Log.d("titlesOfMusic",name);
                 tempPicturesList.add(pictureModel);
@@ -250,6 +246,10 @@ public class ContentLoaderUtils {
         } else {
 
         }
+//        if(c!=null){
+//            c.close();
+//        }
+
         return tempPicturesList;
 
     }
@@ -461,10 +461,37 @@ public class ContentLoaderUtils {
 
         cursor.close();
     }
+    public static void deleteVideo(File file, Context context){
+        String[] projectio={MediaStore.Video.Media._ID};
+        String selection=MediaStore.Video.Media.DATA+ " = ?";
+        String[] selectionArgs=new String[]{file.getAbsolutePath()};
+
+        Uri queryUri=MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        ContentResolver contentResolver=context.getContentResolver();
+        Cursor cursor=contentResolver.query(queryUri,projectio,selection,selectionArgs,null);
+        try{
+
+            if (cursor != null && cursor.moveToFirst()) {
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
+                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
+                contentResolver.delete(deleteUri, null, null);
+
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        cursor.close();
+    }
     public static void deleteFiles(List<PictureModel>pictureModels,Context context){
         for(PictureModel pictureModel:pictureModels){
             File file=new File(pictureModel.getPath());
-            deleteFile(file,context);
+            if(pictureModel.getMedia_type()==1){//check for images
+                deleteFile(file,context);
+
+            }else{
+                deleteVideo(file,context);
+            }
         }
 
     }

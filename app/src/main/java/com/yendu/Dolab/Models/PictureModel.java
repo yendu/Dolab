@@ -8,6 +8,7 @@ public class PictureModel implements Comparable<PictureModel> {
     private String height;
     private String date;
     private int dateAdded;
+    private int media_type;
 
     public String getDate() {
         return date;
@@ -24,6 +25,14 @@ public class PictureModel implements Comparable<PictureModel> {
     public void setDate(String date) {
         this.date = date;
 
+    }
+
+    public int getMedia_type() {
+        return media_type;
+    }
+
+    public void setMedia_type(int media_type) {
+        this.media_type = media_type;
     }
 
     private boolean selected=false;

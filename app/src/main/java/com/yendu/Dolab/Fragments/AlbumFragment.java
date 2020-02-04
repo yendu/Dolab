@@ -14,8 +14,7 @@ import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 
 import android.view.LayoutInflater;
-//import android.view.Menu;
-//import android.view.MenuInflater;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,44 +58,40 @@ import static com.yendu.Dolab.Activites.MainActivity.LANGUAGE;
 
 public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    View view;
+    private static boolean sorted = false;
     public TextView textViewNoAlbum;
 
     public AlbumsCursorAdapter albumsCursorAdapter;
+    private RecyclerView recyclerView;
 
+    public int cursorCount = 0;
+    private View view;
     private ProgressBar progressBar;
-    public RecyclerView recyclerView;
-    private boolean firstTimeLoaded=false;
-    public static boolean sorted=false;
-//    Menu menu;
-    public int cursorCount=0;
-
+    private boolean firstTimeLoaded = false;
     private EditText editText1;
     private FastScroller fastScroller;
-    public AlbumFragment(){
+
+    public AlbumFragment() {
 
 
     }
-
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        setHasOptionsMenu(true);
-
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
-        if(firstTimeLoaded==false){
+        if (!firstTimeLoaded) {
 
-            LoaderManager.getInstance(this).initLoader(88,null,this);
-            firstTimeLoaded=true;
-        }else{
-            LoaderManager.getInstance(this).restartLoader(88,null,this);
+            LoaderManager.getInstance(this).initLoader(88, null, this);
+            firstTimeLoaded = true;
+        } else {
+            LoaderManager.getInstance(this).restartLoader(88, null, this);
 
 
         }
@@ -116,10 +111,11 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @NonNull
     @Override
+
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        if(id==88){
+        if (id == 88) {
 //            String[] PROJECTION_BUCKET = {MediaStore.Images.ImageColumns.BUCKET_ID,MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.DATA};
-            String[] PROJECTION_BUCKET = {MediaStore.Files.FileColumns.BUCKET_ID,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME, MediaStore.Files.FileColumns.DATE_TAKEN, MediaStore.Files.FileColumns.DATA};
+            String[] PROJECTION_BUCKET = {MediaStore.Files.FileColumns.BUCKET_ID, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME, MediaStore.Files.FileColumns.DATE_TAKEN, MediaStore.Files.FileColumns.DATA};
             String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                     + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
                     + " OR "
@@ -129,48 +125,47 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
             String BUCKET_GROUP_BY = "1) GROUP BY 1,(2";
 //            String BUCKET_ORDER_BY = "MAX(datetaken) DESC";
             String order;
-            if(sorted){
-                order="ASC";
-            }else{
-                order="DESC";
+            if (sorted) {
+                order = "ASC";
+            } else {
+                order = "DESC";
 
             }
 
-//            String order=args.getString("SORTORDER");
 //            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             Uri images = MediaStore.Files.getContentUri("external");
 
-            if(args!=null){
-                String s=args.getString("SEARCHWORDS");
-                String []splited=s.split("\\s+");
-                StringBuilder selectionn=new StringBuilder();
+            if (args != null) {
+                String s = args.getString("SEARCHWORDS");
+                String[] splited = s.split("\\s+");
+                StringBuilder selectionn = new StringBuilder();
 //                selection.append(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME);
-                String[]argss=new String[splited.length];
-                if(splited.length>1){
-                    for(int i=0;i<splited.length; i++){
-                        argss[i]="%"+splited[i]+"%";
+                String[] argss = new String[splited.length];
+                if (splited.length > 1) {
+                    for (int i = 0; i < splited.length; i++) {
+                        argss[i] = "%" + splited[i] + "%";
 //                    selection.append();
-                        if(i+1==splited.length){
-                            selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ? or ");
-                            selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ?");
+                        if (i + 1 == splited.length) {
+                            selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME + " like ? or ");
+                            selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME + " like ?");
                             break;
                         }
-                        selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ? or ");
+                        selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME + " like ? or ");
 
                     }
 
-                }else{
-                    argss[0]="%"+splited[0]+"%";
-                    selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ?");
+                } else {
+                    argss[0] = "%" + splited[0] + "%";
+                    selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME + " like ?");
                 }
 //
-                order="CASE WHEN bucket_display_name ='"+s+"' THEN 0 WHEN bucket_display_name LIKE '"+s+"%"+"' THEN 1 WHEN bucket_display_name LIKE '"+"%"+s+"%"+"' THEN 2 WHEN bucket_display_name LIKE '"+"%"+s+"' THEN 3 ELSE 4 END, bucket_display_name DESC";
-                return new CursorLoader(getContext(),images,PROJECTION_BUCKET,"("+selection+") AND (" +selectionn.toString()+")) GROUP BY 1,(2",argss,order);
+                order = "CASE WHEN bucket_display_name ='" + s + "' THEN 0 WHEN bucket_display_name LIKE '" + s + "%" + "' THEN 1 WHEN bucket_display_name LIKE '" + "%" + s + "%" + "' THEN 2 WHEN bucket_display_name LIKE '" + "%" + s + "' THEN 3 ELSE 4 END, bucket_display_name DESC";
+                return new CursorLoader(getContext(), images, PROJECTION_BUCKET, "(" + selection + ") AND (" + selectionn.toString() + ")) GROUP BY 1,(2", argss, order);
 //
             }
 //
 
-            return new CursorLoader(getContext(),images,PROJECTION_BUCKET,selection+") GROUP BY 1,(2",null,MediaStore.Files.FileColumns.DATE_TAKEN+" "+order);
+            return new CursorLoader(getContext(), images, PROJECTION_BUCKET, selection + ") GROUP BY 1,(2", null, MediaStore.Files.FileColumns.DATE_TAKEN + " " + order);
 //            return new CursorLoader(getContext(),images,PROJECTION_BUCKET,BUCKET_GROUP_BY,null,order);
         }
 
@@ -178,22 +173,22 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
 
 
     }
-    public void LoadAlbum(){
-        LoaderManager.getInstance(this).restartLoader(88,null,this);
+
+    public void LoadAlbum() {
+        LoaderManager.getInstance(this).restartLoader(88, null, this);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        try{
-            if(data!=null && data.getCount()>0)
-            {
+        try {
+            if (data != null && data.getCount() > 0) {
 
 
-                cursorCount=data.getCount();
-                if(albumsCursorAdapter==null){
-                    albumsCursorAdapter=new AlbumsCursorAdapter(getContext(),data);
+                cursorCount = data.getCount();
+                if (albumsCursorAdapter == null) {
+                    albumsCursorAdapter = new AlbumsCursorAdapter(getContext(), data);
                     recyclerView.setAdapter(albumsCursorAdapter);
-                }else{
+                } else {
                     albumsCursorAdapter.changeCursor(data);
                     albumsCursorAdapter.notifyDataSetChanged();
                 }
@@ -202,16 +197,15 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                 textViewNoAlbum.setVisibility(View.GONE);
 
 
-            }else{
-                cursorCount=0;
+            } else {
+                cursorCount = 0;
                 albumsCursorAdapter.changeCursor(data);
                 albumsCursorAdapter.notifyDataSetChanged();
                 textViewNoAlbum.setVisibility(View.VISIBLE);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-
 
 
     }
@@ -233,7 +227,6 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
 
-
     @Override
     public void onStart() {
 //        refreshAdapter();
@@ -244,34 +237,35 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.rename_context_menu:
-                final Dialog dialog1=new Dialog(getContext(),android.R.style.Theme_DeviceDefault_Light_Dialog);
+                final Dialog dialog1 = new Dialog(getContext(), android.R.style.Theme_DeviceDefault_Light_Dialog);
                 dialog1.setContentView(R.layout.dialog);
-                ((TextView)dialog1.findViewById(R.id.dialog_textView)).setText("Rename");
-                editText1=((EditText)dialog1.findViewById(R.id.dialog_editText));
+                ((TextView) dialog1.findViewById(R.id.dialog_textView)).setText(R.string.rename);
+                editText1 = ((EditText) dialog1.findViewById(R.id.dialog_editText));
 
                 editText1.setText(albumsCursorAdapter.cursor.getString(1));
-                final String path=albumsCursorAdapter.cursor.getString(3);
+                final String path = albumsCursorAdapter.cursor.getString(3);
                 editText1.selectAll();
-                ((TextView)dialog1.findViewById(R.id.ok_dialog_textView)).setOnClickListener(new View.OnClickListener() {
+                ((TextView) dialog1.findViewById(R.id.ok_dialog_textView)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 //                        File secondPhoto =new File(albumsCursorAdapter.cursor.getString(3).substring(0,albumsCursorAdapter.cursor.getString(3).lastIndexOf("/"))) ;
-                        File secondPhoto =new File(path.substring(0,path.lastIndexOf("/"))) ;
+                        File oldAlbum = new File(path.substring(0, path.lastIndexOf("/")));
 
                         if (!editText1.getText().toString().isEmpty()) {
                             String newName = editText1.getText().toString();
-                            File newPhotoFile = new File(secondPhoto.getParent() + "/" + newName);
+                            File newAlbum = new File(oldAlbum.getParent() + "/" + newName);
 
 
-                            if (secondPhoto.renameTo(newPhotoFile)) {
-                                updateMediaStore(getContext(),ContentLoaderUtils.getAllImagesFromFolder(getContext(),secondPhoto.getAbsolutePath()),newPhotoFile.getAbsolutePath());
+                            if (oldAlbum.renameTo(newAlbum)) {
+                                updateMediaStore(getContext(), ContentLoaderUtils.getAllImagesFromFolder(getContext(), oldAlbum.getAbsolutePath()), newAlbum.getAbsolutePath());
+                               // albumsCursorAdapter.notifyDataSetChanged();
+                                refresh();
 
-                            }else{
-                                Toast.makeText(getContext(),"Can't rename this album",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Can't rename this album", Toast.LENGTH_SHORT).show();
                             }
-
 
 
 //                            secondPhoto.
@@ -282,26 +276,26 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                         }
                     }
                 });
-                ((TextView)dialog1.findViewById(R.id.cancel_dialog_textView)).setOnClickListener(new View.OnClickListener() {
+                ((TextView) dialog1.findViewById(R.id.cancel_dialog_textView)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog1.cancel();
                     }
                 });
 
-                ((ImageButton)dialog1.findViewById(R.id.mic_button_dialog)).setOnClickListener(new View.OnClickListener() {
+                ((ImageButton) dialog1.findViewById(R.id.mic_button_dialog)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         getSpeech();
                     }
                 });
-                final Spinner spinner1=((Spinner)dialog1.findViewById(R.id.spinner_toolbar_dialog));
-                SpinnerAdapter spinnerAdapter1=new SpinnerAdapter(getContext(),R.array.language,R.array.shortformlanguage);
+                final Spinner spinner1 = ((Spinner) dialog1.findViewById(R.id.spinner_toolbar_dialog));
+                SpinnerAdapter spinnerAdapter1 = new SpinnerAdapter(getContext(), R.array.language, R.array.shortformlanguage);
                 spinner1.setAdapter(spinnerAdapter1);
                 spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        switch (spinner1.getSelectedItemPosition()){
+                        switch (spinner1.getSelectedItemPosition()) {
                             case 0:
                                 LocaleHelper.setLocale(getContext(), "us");
                                 LANGUAGE = "us";
@@ -314,12 +308,12 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                                 break;
                             case 2:
                                 LocaleHelper.setLocale(getContext(), "es");
-                                LANGUAGE= "es";
+                                LANGUAGE = "es";
 //                        LocaleHelper.restart(MainActivity.this);
                                 break;
                             case 3:
-                                LocaleHelper.setLocale(getContext(),"zh");
-                                LANGUAGE="zh";
+                                LocaleHelper.setLocale(getContext(), "zh");
+                                LANGUAGE = "zh";
 //                        LocaleHelper.restart(MainActivity.this);
 
                         }
@@ -332,9 +326,10 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                 });
                 dialog1.setCanceledOnTouchOutside(false);
                 dialog1.show();
+
                 return true;
             case R.id.delete_context_menu:
-                final AlertDialog.Builder alertBuilder=new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
                 alertBuilder.setMessage("Delete selected album");
                 alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -345,7 +340,7 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                 alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ContentLoaderUtils.deleteFiles(ContentLoaderUtils.getAllImagesFromFolder(getContext(),albumsCursorAdapter.cursor.getString(3).substring(0,albumsCursorAdapter.cursor.getString(3).lastIndexOf("/"))),getContext());
+                        ContentLoaderUtils.deleteFiles(ContentLoaderUtils.getAllImagesFromFolder(getContext(), albumsCursorAdapter.cursor.getString(3).substring(0, albumsCursorAdapter.cursor.getString(3).lastIndexOf("/"))), getContext());
 
 
                     }
@@ -356,15 +351,29 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
 
         return super.onContextItemSelected(item);
     }
-    private void updateMediaStore(Context context, List<PictureModel>selected, String newCreateAlbumPath){
-        for (PictureModel images:selected){
-            String path=images.getPath();
-            String newPath=newCreateAlbumPath+"/"+images.getName();
-//            String newPath=newCreateAlbumPath;
 
-            ContentValues contentValues=new ContentValues();
-            contentValues.put(MediaStore.Images.ImageColumns.DATA,newPath);
-            context.getContentResolver().update(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues, MediaStore.Images.ImageColumns.DATA+ "='"+path+"'",null);
+    private void updateMediaStore(Context context, List<PictureModel> selected, String newCreateAlbumPath) {
+        for (PictureModel images : selected) {
+            String path = images.getPath();
+            String newPath = newCreateAlbumPath + "/" + images.getName();
+//            String newPath=newCreateAlbumPath;
+//            String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+//                    + MediaStore.Images.ImageColumns.MEDIA_TYPE_IMAGE
+//                    + " OR "
+//                    + MediaStore.Images.ImageColumns.MEDIA_TYPE + "="
+//                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
+            Uri uri=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            if(images.getMedia_type()==1){
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Images.ImageColumns.DATA, newPath);
+                context.getContentResolver().update(uri, contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
+            }else {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Video.VideoColumns.DATA, newPath);
+                context.getContentResolver().update(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Video.VideoColumns.DATA + "='" + path + "'", null);
+            }
+
 
         }
     }
@@ -372,9 +381,9 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case 10:
-                if(resultCode==RESULT_OK && data!=null){
+                if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     if (matches != null && matches.size() > 0) {
                         String searchWrd = matches.get(0);
@@ -385,6 +394,7 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                 }
         }
     }
+
     private void getSpeech() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, LANGUAGE);
@@ -400,38 +410,43 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view=inflater.inflate(R.layout.album_fragment,container,false);
-        recyclerView=view.findViewById(R.id.albums_recycler_view_fragment);
-        textViewNoAlbum=view.findViewById(R.id.album_fragment_no_album_text_view);
-        progressBar=view.findViewById(R.id.album_fragment_loader);
-        fastScroller=view.findViewById(R.id.fastscroll_album);
+        view = inflater.inflate(R.layout.album_fragment, container, false);
+        recyclerView = view.findViewById(R.id.albums_recycler_view_fragment);
+        textViewNoAlbum = view.findViewById(R.id.album_fragment_no_album_text_view);
+        progressBar = view.findViewById(R.id.album_fragment_loader);
+        fastScroller = view.findViewById(R.id.fastscroll_album);
 
         refreshAdapter();
         return view;
     }
 
-    private void refreshAdapter(){
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(getContext(),2);
+    private void refreshAdapter() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
 
-        albumsCursorAdapter=new AlbumsCursorAdapter(getContext(),null);
+        albumsCursorAdapter = new AlbumsCursorAdapter(getContext(), null);
         recyclerView.setLayoutManager(gridLayoutManager);
-       recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(albumsCursorAdapter);
 
         fastScroller.setRecyclerView(recyclerView);
     }
-    public void sort(){
-        sorted=!sorted;
-        LoaderManager.getInstance(this).restartLoader(88,null,this);
+
+    public void sort() {
+        sorted = !sorted;
+        refresh();
 
     }
-    public void search(String search){
-        Bundle bundle=new Bundle();
-        bundle.putString("SEARCHWORDS",search);
-        LoaderManager.getInstance(this).restartLoader(88,bundle,this);
+    public void refresh(){
+        LoaderManager.getInstance(this).restartLoader(88, null, this);
+
+    }
+
+    public void search(String search) {
+        Bundle bundle = new Bundle();
+        bundle.putString("SEARCHWORDS", search);
+        LoaderManager.getInstance(this).restartLoader(88, bundle, this);
     }
 }
