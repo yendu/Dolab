@@ -118,7 +118,14 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         if(id==88){
-            String[] PROJECTION_BUCKET = {MediaStore.Images.ImageColumns.BUCKET_ID,MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.DATA};
+//            String[] PROJECTION_BUCKET = {MediaStore.Images.ImageColumns.BUCKET_ID,MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.DATA};
+            String[] PROJECTION_BUCKET = {MediaStore.Files.FileColumns.BUCKET_ID,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME, MediaStore.Files.FileColumns.DATE_TAKEN, MediaStore.Files.FileColumns.DATA};
+            String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                    + " OR "
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
             String BUCKET_GROUP_BY = "1) GROUP BY 1,(2";
 //            String BUCKET_ORDER_BY = "MAX(datetaken) DESC";
             String order;
@@ -130,11 +137,13 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
             }
 
 //            String order=args.getString("SORTORDER");
-            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Uri images = MediaStore.Files.getContentUri("external");
+
             if(args!=null){
                 String s=args.getString("SEARCHWORDS");
                 String []splited=s.split("\\s+");
-                StringBuilder selection=new StringBuilder();
+                StringBuilder selectionn=new StringBuilder();
 //                selection.append(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME);
                 String[]argss=new String[splited.length];
                 if(splited.length>1){
@@ -142,26 +151,26 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                         argss[i]="%"+splited[i]+"%";
 //                    selection.append();
                         if(i+1==splited.length){
-                            selection.append(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" like ? or ");
-                            selection.append(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" like ?");
+                            selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ? or ");
+                            selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ?");
                             break;
                         }
-                        selection.append(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" like ? or ");
+                        selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ? or ");
 
                     }
 
                 }else{
                     argss[0]="%"+splited[0]+"%";
-                    selection.append(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" like ?");
+                    selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" like ?");
                 }
 //
                 order="CASE WHEN bucket_display_name ='"+s+"' THEN 0 WHEN bucket_display_name LIKE '"+s+"%"+"' THEN 1 WHEN bucket_display_name LIKE '"+"%"+s+"%"+"' THEN 2 WHEN bucket_display_name LIKE '"+"%"+s+"' THEN 3 ELSE 4 END, bucket_display_name DESC";
-                return new CursorLoader(getContext(),images,PROJECTION_BUCKET,selection.toString()+BUCKET_GROUP_BY,argss,order);
+                return new CursorLoader(getContext(),images,PROJECTION_BUCKET,"("+selection+") AND (" +selectionn.toString()+")) GROUP BY 1,(2",argss,order);
 //
             }
 //
 
-            return new CursorLoader(getContext(),images,PROJECTION_BUCKET,BUCKET_GROUP_BY,null,MediaStore.Images.ImageColumns.DATE_TAKEN+" "+order);
+            return new CursorLoader(getContext(),images,PROJECTION_BUCKET,selection+") GROUP BY 1,(2",null,MediaStore.Files.FileColumns.DATE_TAKEN+" "+order);
 //            return new CursorLoader(getContext(),images,PROJECTION_BUCKET,BUCKET_GROUP_BY,null,order);
         }
 

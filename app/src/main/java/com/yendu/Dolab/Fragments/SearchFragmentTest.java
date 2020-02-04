@@ -188,18 +188,12 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
     @Override
     public void queryChange(List<PictureModel> pictureModelList, Context context) {
         this.pictureModelList=pictureModelList;
-//        indicatorrecyclerView.getAdapter().notifyDataSetChanged();
-//        imagesPager.notifyDataSetChanged();
+
 
 
 
     }
     public void queryChanged(String query){
-//        this.pictureModelList=pictureModels;
-//        recyclerViewPagerImageIndicator indicatorPager=new recyclerViewPagerImageIndicator(pictureModelList,context,this);
-//        indicatorrecyclerView.setAdapter(indicatorPager);
-//        imagesPager=new ImagesPager();
-//        viewPager.setAdapter(imagesPager);
         this.query=query;
         Bundle bundle=new Bundle();
         bundle.putString("SEARCHWORDS",query);
@@ -210,14 +204,22 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
 
     @NonNull
     @Override
-    public Loader onCreateLoader(int id, @Nullable Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
 //        if(id==78) {
 
 
-            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+           // Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Uri images= MediaStore.Files.getContentUri("external");
             String order;
-            String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME};
-            if (args != null) {
+            String selectionn = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                + " OR "
+                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+//            String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME};
+            String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE};
+
+        if (args != null) {
                 String s = args.getString("SEARCHWORDS");
                 String[] splited = s.split("\\s+");
                 StringBuilder selection = new StringBuilder();
@@ -229,22 +231,31 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
 //                    selection.append();
                         if (i + 1 == splited.length) {
 
-                            selection.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ?");
+
+                            selection.append(MediaStore.Files.FileColumns.TITLE + " like ?");
+                          //  selection.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ?");
+
                             break;
                         }
-                        selection.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ? or ");
+                        selection.append(MediaStore.Files.FileColumns.TITLE + " like ? or ");
+                       // selection.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ? or ");
+
 
                     }
 
                 } else {
                     argss[0] = "%" + splited[0] + "%";
-                    selection.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ?");
+                    selection.append(MediaStore.Files.FileColumns.TITLE + " like ?");
+                  //  selection.append(MediaStore.Images.ImageColumns.TITLE + " like ?");
+
                 }
 //
 
                 order = "CASE WHEN _display_name ='" + s + "' THEN 0 WHEN _display_name LIKE '" + s + "%" + "' THEN 1 WHEN _display_name LIKE '" + "%" + s + "%" + "' THEN 2 WHEN _display_name LIKE '" + "%" + s + "' THEN 3 ELSE 4 END, _display_name DESC";
-                return new CursorLoader(getContext(), images, projection, selection.toString(), argss, order);
-            } else {
+                return new CursorLoader(getContext(), images, projection, "("+selectionn+") AND ("+selection.toString()+")", argss, order);
+//            return new CursorLoader(getContext(), images, projection, selection.toString(), argss, order);
+
+        } else {
                 return new CursorLoader(getContext(),images,projection,null,null,null);
             }
 //        }

@@ -209,13 +209,20 @@ public class PicturesView extends AppCompatActivity implements itemClickListener
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Uri uri = MediaStore.Files.getContentUri("external");
+
+        String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                + " OR "
+                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
             String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
-        return new CursorLoader(this,uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
+        return new CursorLoader(this,uri, projection, "("+selection+") AND ("+MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?)", new String[]{bucketName},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
         }else{
             String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
-            return new CursorLoader(this,uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?",new String[]{bucketName}, MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
+            return new CursorLoader(this,uri, projection, "("+selection+") AND ("+MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?)",new String[]{bucketName}, MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
         }
 
 

@@ -390,26 +390,30 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
                 + " OR "
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+        String select="("+selection+") AND ";
 
         if(PicturesView.class.getName()==context.getClass().getName()){
            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
              //  String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
-               String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
-               return new CursorLoader(context,uri, projection, selection+" "+MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Files.FileColumns.DATE_TAKEN+" DESC");
+               String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.TITLE,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
+               return new CursorLoader(context,uri, projection, select+MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Files.FileColumns.DATE_TAKEN+" DESC");
 
 //               return new CursorLoader(context,uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
            }else{
               // String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
-               String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
-               return new CursorLoader(context,uri, projection, selection+" "+MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Files.FileColumns.DATE_TAKEN+" DESC");
+               String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.TITLE,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
+               return new CursorLoader(context,uri, projection, selection+MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Files.FileColumns.DATE_TAKEN+" DESC");
 
 //               return new CursorLoader(context,uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?",new String[]{bucketName}, MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
            }
        }
        if(query!=null){
            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
-               Uri images=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-               String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
+              // Uri images=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+               Uri images=MediaStore.Files.getContentUri("external");
+              // String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
+               String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT};
+
                String[] splited = query.split("\\s+");
                StringBuilder selectionn = new StringBuilder();
                String order;
@@ -421,25 +425,28 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
 //                    selection.append();
                        if (i + 1 == splited.length) {
 
-                           selectionn.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ?");
+                           selectionn.append(MediaStore.Files.FileColumns.TITLE + " like ?");
                            break;
                        }
-                       selectionn.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ? or ");
+                       selectionn.append(MediaStore.Files.FileColumns.TITLE + " like ? or ");
 
                    }
 
                } else {
                    argss[0] = "%" + splited[0] + "%";
-                   selectionn.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ?");
+                   selectionn.append(MediaStore.Files.FileColumns.TITLE + " like ?");
                }
 //
 
+
                order = "CASE WHEN _display_name ='" + query + "' THEN 0 WHEN _display_name LIKE '" + query + "%" + "' THEN 1 WHEN _display_name LIKE '" + "%" + query + "%" + "' THEN 2 WHEN _display_name LIKE '" + "%" + query + "' THEN 3 ELSE 4 END, _display_name DESC";
-               return new CursorLoader(getContext(), images, projection, selectionn.toString(), argss, order);
+               return new CursorLoader(getContext(), images, projection, select+"("+selectionn.toString()+")", argss, order);
 //               return new CursorLoader(context,uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
            }else{
-               String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
-               Uri images=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+              // String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
+               String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE};
+                Uri images=MediaStore.Files.getContentUri("external");
+             //  Uri images=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 //               String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
                String[] splited = query.split("\\s+");
                StringBuilder selectionn = new StringBuilder();
@@ -452,21 +459,21 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
 //                    selection.append();
                        if (i + 1 == splited.length) {
 
-                           selectionn.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ?");
+                           selectionn.append(MediaStore.Files.FileColumns.TITLE+ " like ?");
                            break;
                        }
-                       selectionn.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ? or ");
+                       selectionn.append(MediaStore.Files.FileColumns.TITLE + " like ? or ");
 
                    }
 
                } else {
                    argss[0] = "%" + splited[0] + "%";
-                   selectionn.append(MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ?");
+                   selectionn.append(MediaStore.Files.FileColumns.TITLE + " like ?");
                }
 //
 
                order = "CASE WHEN _display_name ='" + query + "' THEN 0 WHEN _display_name LIKE '" + query + "%" + "' THEN 1 WHEN _display_name LIKE '" + "%" + query + "%" + "' THEN 2 WHEN _display_name LIKE '" + "%" + query + "' THEN 3 ELSE 4 END, _display_name DESC";
-               return new CursorLoader(getContext(), images, projection, selectionn.toString(), argss, order);
+               return new CursorLoader(getContext(), images, projection, select+"("+selectionn.toString()+")", argss, order);
 //               return new CursorLoader(context,uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?",new String[]{bucketName}, MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
            }
        }
@@ -484,13 +491,13 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
         }*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             // String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.SIZE, MediaStore.Images.ImageColumns.WIDTH, MediaStore.Images.ImageColumns.HEIGHT};
-            String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
+            String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.TITLE,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
             // return new CursorLoader(getContext(), uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " " + order);
             return new CursorLoader(getContext(), uri, projection, selection, null, MediaStore.Files.FileColumns.DATE_TAKEN + " " + order);
 
         } else {
             // String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.SIZE,};
-            String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
+            String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.TITLE,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
             return new CursorLoader(getContext(), uri, projection, selection, null, MediaStore.Files.FileColumns.DATE_TAKEN + " " + order);
 
 //                return new CursorLoader(getContext(), uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " " + order);

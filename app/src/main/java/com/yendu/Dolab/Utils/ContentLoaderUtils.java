@@ -401,21 +401,42 @@ public class ContentLoaderUtils {
         return galleryPhotoAlbums;
 }
     public static int photoCountByAlbum(Context context,String bucketName) {
+         Cursor mPhotoCursor=null;
+         Cursor mVideosCursor = null;
         try {
-//            final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
-//            String searchParams = null;
-//            String bucket = bucketName;
-           String searchParams = "bucket_display_name = \"" + bucketName + "\"";
-            Cursor mPhotoCursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, searchParams, null, null);
+//            String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+//                    + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+//                    + " OR "
+//                    + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+//                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
-            if (mPhotoCursor.getCount() > 0) {
-                return mPhotoCursor.getCount();
+
+           String searchParams = "bucket_display_name = \"" + bucketName + "\"";
+          // Uri uri=MediaStore.Files.getContentUri("external");
+           //MediaStore.
+             mPhotoCursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, searchParams, null, null);
+             mVideosCursor=context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,null,searchParams,null,null);
+          //  Cursor mPhotoCursor = context.getContentResolver().query(uri, null, searchParams, null, null);
+
+            if (mPhotoCursor.getCount() > 0 || mVideosCursor.getCount()>0) {
+
+                return mPhotoCursor.getCount() + mVideosCursor.getCount();
             }
-            mPhotoCursor.close();
+
 
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            if(mVideosCursor!=null){
+                mVideosCursor.close();
+            }
+            if(mPhotoCursor!=null){
+                mPhotoCursor.close();
+            }
+
+
         }
+
         return 0;
     }
 
