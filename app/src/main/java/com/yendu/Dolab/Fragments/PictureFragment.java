@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +36,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -83,6 +83,7 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
     private static int imagesRenameNumber;
     private PicturesCursorAdapter picturesCursorAdapter;
     public static boolean Sorted = false;
+    private MediaScannerConnection mediaScannerConnection;
 
     @Nullable
     @Override
@@ -182,13 +183,20 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
                                 for (int i = 0; i < 3; i++) {
                                     if (secondPhoto.renameTo(newPhotoFile)) {
 //                                getContext().getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media.DATA+ "= ?",new String[]{secondPhoto.getAbsolutePath()});
-                                        ContentLoaderUtils.deleteFile(secondPhoto, getContext());
+                                        int media_type;
+                                        if(isBuildAboveJellyBean()){
+                                            media_type=picturesCursorAdapter.cursor.getInt(7);
+                                        }else{
+                                            media_type=picturesCursorAdapter.cursor.getInt(5);
+                                        }
+                                        if(media_type==1){
+                                            ContentLoaderUtils.deleteFile(secondPhoto, getContext());
+                                        }else{
+                                            ContentLoaderUtils.deleteVideo(secondPhoto,getContext());
+                                        }
+
                                         getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(newPhotoFile)));
-//                                    pictureModels.get(picturesAdapter.getPosition()).setName(newName+format);
-//                                    pictureModels.get(picturesAdapter.getPosition()).setPath(newPhotoFile.getAbsolutePath());
-//                                    picturesAdapter.pictureModelArrayList.get(picturesAdapter.getPosition()).setSelected(false);
                                         picturesCursorAdapter.selectedList.clear();
-//                                    picturesAdapter.notifyDataSetChanged();
                                         rebackToNormal();
                                         picturesCursorAdapter.selected = false;
                                         break;
@@ -279,14 +287,8 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
 
 //                                   String des=ContentLoaderUtils.MoveFile(pictureModels.get(picturesAdapter.selectedList.get(0)).getPath(),albumFolder.getAbsolutePath());
                                 String des = ContentLoaderUtils.MoveFile(picturesCursorAdapter.cursor.getString(0), albumFolder.getAbsolutePath());
-                                ContentLoaderUtils.updateMediaStore(getContext(), albumFolder.getAbsolutePath(), picturesCursorAdapter.cursor.getString(0));
-//                                   ContentLoaderUtils.updateMediaStore(getContext(),albumFolder.getAbsolutePath(),pictureModels.get(picturesAdapter.selectedList.get(0)).getPath());
-
-//                                   pictureModels.get(picturesAdapter.selectedList.get(0)).setPath(des);
-//                                   picturesAdapter.pictureModelArrayList.get(picturesAdapter.selectedList.get(0)).setPath(des);
-//                                   picturesAdapter.pictureModelArrayList.get(picturesAdapter.selectedList.get(0)).setSelected(false);
+                                updateMediaStore(getContext(),picturesCursorAdapter.cursor.getPosition(),albumFolder.getAbsolutePath());
                                 picturesCursorAdapter.selectedList.clear();
-//                                   picturesAdapter.notifyDataSetChanged();
                             }
                             if (picturesCursorAdapter.selectedList.size() > 1) {
                                 MoveFile(picturesCursorAdapter.selectedList, albumFolder.getAbsolutePath());
@@ -306,7 +308,6 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
                                 picturesCursorAdapter.selectedList.clear();
 
 
-//                                   picturesAdapter.notifyDataSetChanged();
                             }
                             rebackToNormal();
                         }
@@ -382,7 +383,18 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
 //                            File tobeDelete=new File(pictureModels.get(picturesCuAdapter.getPosition()).getPath());
                             picturesCursorAdapter.cursor.moveToPosition(picturesCursorAdapter.selectedList.get(0));
                             File tobeDeleted = new File(picturesCursorAdapter.cursor.getString(0));
-                            ContentLoaderUtils.deleteFile(tobeDeleted, getContext());
+                            int media_type;
+                            if(isBuildAboveJellyBean()){
+                                media_type=picturesCursorAdapter.cursor.getInt(7);
+                            }else{
+                                media_type=picturesCursorAdapter.cursor.getInt(5);
+                            }
+                            if(media_type==1){
+                                ContentLoaderUtils.deleteFile(tobeDeleted, getContext());
+
+                            }else{
+                                ContentLoaderUtils.deleteVideo(tobeDeleted,getContext());
+                            }
 //                            picturesAdapter.pictureModelArrayList.remove(picturesAdapter.getPosition());
 //                            picturesAdapter.notifyDataSetChanged();
                             rebackToNormal();
@@ -413,30 +425,102 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
         }
         return super.onOptionsItemSelected(item);
     }
+    private void updateMediaStore(Context context,int selectedIndex,String newCreatedAlbumPath){
+        picturesCursorAdapter.cursor.moveToPosition(selectedIndex);
+        String path=picturesCursorAdapter.cursor.getString(0);
+        String newPath=newCreatedAlbumPath+"/"+picturesCursorAdapter.cursor.getString(1);
+        int media_type;
+        if(isBuildAboveJellyBean()){
+            media_type=picturesCursorAdapter.cursor.getInt(7);
+        }else{
+            media_type=picturesCursorAdapter.cursor.getInt(5);
+        }
+        if(media_type==1){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.Images.ImageColumns.DATA, newPath);
+            ContentValues contentValues1=new ContentValues();
+            contentValues1.put(MediaStore.Files.FileColumns.DATA,newPath);
 
-    private void updateMediaStore(Context context, List<Integer> selected, String newCreateAlbumPath) {
+            try {
+                context.getContentResolver().update(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
+                context.getContentResolver().update(MediaStore.Files.getContentUri("external"),contentValues1,MediaStore.Files.FileColumns.DATA+"='"+newPath+"'",null);
+                //  context.getContentResolver().update(MediaStore.Files.getContentUri("external"), contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
+
+            } catch (Exception ex) {
+//
+                ex.printStackTrace();
+
+            }
+        }else{
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.Video.VideoColumns.DATA, newPath);
+            ContentValues contentValues1=new ContentValues();
+            contentValues1.put(MediaStore.Files.FileColumns.DATA,newPath);
+
+            try {
+
+                context.getContentResolver().update(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Video.VideoColumns.DATA + "='" + path + "'", null);
+                context.getContentResolver().update(MediaStore.Files.getContentUri("external"), contentValues, MediaStore.Files.FileColumns.DATA + "='" + path + "'", null);
+
+
+            } catch (Exception ex) {
+//
+
+
+            }
+        }
+
+    }
+
+    private void updateMediaStore(final Context context, List<Integer> selected, String newCreateAlbumPath) {
         for (Integer integer : selected) {
             picturesCursorAdapter.cursor.moveToPosition(integer);
             String path = picturesCursorAdapter.cursor.getString(0);
 //            String path=pictureModels.get(integer).getPath();
 //            String newPath=newCreateAlbumPath+"/"+pictureModels.get(integer).getName();
-            String newPath = newCreateAlbumPath + "/" + picturesCursorAdapter.cursor.getString(1);
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Images.ImageColumns.DATA, newPath);
+            final String newPath = newCreateAlbumPath + "/" + picturesCursorAdapter.cursor.getString(1);
 
-            try {
-                context.getContentResolver().update(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
-
-            } catch (Exception ex) {
-//                String newPathh=newCreateAlbumPath+"/"+"Copy"+picturesCursorAdapter.cursor.getString(1);
-
-
-//                contentValues.put(MediaStore.Images.ImageColumns.DATA,newPathh);
-//                context.getContentResolver().update(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues, MediaStore.Images.ImageColumns.DATA+ "='"+path+"'",null);
-
-
+            int media_type;
+            if(isBuildAboveJellyBean()){
+                media_type=picturesCursorAdapter.cursor.getInt(7);
+            }else{
+                media_type=picturesCursorAdapter.cursor.getInt(5);
             }
 
+            if(media_type==1){
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Images.ImageColumns.DATA, newPath);
+                ContentValues contentValues1=new ContentValues();
+                contentValues1.put(MediaStore.Files.FileColumns.DATA,newPath);
+
+                try {
+                    context.getContentResolver().update(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
+                    context.getContentResolver().update(MediaStore.Files.getContentUri("external"),contentValues1,MediaStore.Files.FileColumns.DATA+"='"+newPath+"'",null);
+                  //  context.getContentResolver().update(MediaStore.Files.getContentUri("external"), contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
+
+                } catch (Exception ex) {
+//
+                    ex.printStackTrace();
+
+                }
+            }else{
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Video.VideoColumns.DATA, newPath);
+                ContentValues contentValues1=new ContentValues();
+                contentValues1.put(MediaStore.Files.FileColumns.DATA,newPath);
+
+                try {
+
+                    context.getContentResolver().update(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Video.VideoColumns.DATA + "='" + path + "'", null);
+                    context.getContentResolver().update(MediaStore.Files.getContentUri("external"), contentValues, MediaStore.Files.FileColumns.DATA + "='" + path + "'", null);
+
+
+                } catch (Exception ex) {
+//
+
+
+                }
+            }
 
         }
     }
@@ -457,9 +541,20 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
             picturesCursorAdapter.cursor.moveToPosition(integer);
 //            File file=new File(pictureModels.get(integer).getPath());
 //            filesTobDeleted.
+            int media_type;
+            if(isBuildAboveJellyBean()){
+                media_type=picturesCursorAdapter.cursor.getInt(7);
+            }else{
+                media_type=picturesCursorAdapter.cursor.getInt(5);
+            }
             File file = new File(picturesCursorAdapter.cursor.getString(0));
-            ContentLoaderUtils.deleteFile(file, getContext());
-//            picturesAdapter.pictureModelArrayList.remove((int)integer);
+
+            if(media_type==1){
+                ContentLoaderUtils.deleteFile(file, getContext());
+
+            }else{
+                ContentLoaderUtils.deleteVideo(file,getContext());
+            }
 
         }
 
@@ -478,7 +573,6 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
             albumFolder = new File(toBeNamed);
 
         }
-//        Toast.makeText(getContext(),"Try another tag name",Toast.LENGTH_SHORT).show();
         Toast.makeText(getContext(), String.valueOf("Tag " + name + " created"), Toast.LENGTH_SHORT).show();
         return true;
 
@@ -686,6 +780,12 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         loader.reset();
 
+    }
+    private boolean isBuildAboveJellyBean(){
+        if(Build.VERSION.SDK_INT>Build.VERSION_CODES.JELLY_BEAN){
+            return true;
+        }
+        return false;
     }
 
 }

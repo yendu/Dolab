@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 //import android.net.Uri;
 import android.database.Cursor;
+import android.database.CursorJoiner;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -151,6 +152,8 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                             break;
                         }
                         selectionn.append(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME + " like ? or ");
+                        //CursorJoiner cursorJoiner=new CursorJoiner(getContext());
+
 
                     }
 
@@ -261,7 +264,7 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                             if (oldAlbum.renameTo(newAlbum)) {
                                 updateMediaStore(getContext(), ContentLoaderUtils.getAllImagesFromFolder(getContext(), oldAlbum.getAbsolutePath()), newAlbum.getAbsolutePath());
                                // albumsCursorAdapter.notifyDataSetChanged();
-                                refresh();
+                               // refresh();
 
                             } else {
                                 Toast.makeText(getContext(), "Can't rename this album", Toast.LENGTH_SHORT).show();
@@ -364,15 +367,27 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
 //                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
             Uri uri=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            if(images.getMedia_type()==1){
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.Images.ImageColumns.DATA, newPath);
-                context.getContentResolver().update(uri, contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
-            }else {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.Video.VideoColumns.DATA, newPath);
-                context.getContentResolver().update(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Video.VideoColumns.DATA + "='" + path + "'", null);
+            try{
+                if(images.getMedia_type()==1){
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MediaStore.Images.ImageColumns.DATA, newPath);
+
+                    context.getContentResolver().update(uri, contentValues, MediaStore.Images.ImageColumns.DATA + "='" + path + "'", null);
+                }else {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MediaStore.Video.VideoColumns.DATA, newPath);
+                    context.getContentResolver().update(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Video.VideoColumns.DATA + "='" + path + "'", null);
+
+                }
+                ContentValues contentValues1=new ContentValues();
+                contentValues1.put(MediaStore.Files.FileColumns.DATA,newPath);
+                context.getContentResolver().update(MediaStore.Files.getContentUri("external"),contentValues1,MediaStore.Files.FileColumns.DATA+ "='"+newPath+"'",null);
+
+
+            }catch (Exception ex){
+                ex.printStackTrace();
             }
+
 
 
         }

@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 //import android.text.style.TtsSpan;
-import android.util.Log;
-import android.widget.Toast;
 
 
 import com.yendu.Dolab.Models.AlbumModel;
@@ -476,6 +474,7 @@ public class ContentLoaderUtils {
                 Uri deleteUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
                 contentResolver.delete(deleteUri, null, null);
 
+
             }
         }catch (Exception ex){
             ex.printStackTrace();
@@ -483,6 +482,7 @@ public class ContentLoaderUtils {
 
         cursor.close();
     }
+
     public static void deleteFiles(List<PictureModel>pictureModels,Context context){
         for(PictureModel pictureModel:pictureModels){
             File file=new File(pictureModel.getPath());
@@ -512,6 +512,14 @@ public class ContentLoaderUtils {
         ContentValues contentValues=new ContentValues();
         contentValues.put(MediaStore.Images.ImageColumns.DATA,newPath);
         context.getContentResolver().update(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues, MediaStore.Images.ImageColumns.DATA+ "='"+oldpath+"'",null);
+
+    }
+    public static void updateVideoStore(Context context,String newCreatedPath,String oldpath){
+        String newPath=newCreatedPath+"/"+oldpath.substring(oldpath.lastIndexOf("/")+1);
+
+        ContentValues contentValues=new ContentValues();
+        contentValues.put(MediaStore.Video.VideoColumns.DATA,newPath);
+        context.getContentResolver().update(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,contentValues, MediaStore.Video.VideoColumns.DATA+ "='"+oldpath+"'",null);
 
     }
     public static String MoveFile(String source,String destination){
