@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,8 @@ import com.yendu.Dolab.interfaces.itemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.yendu.Dolab.Fragments.PictureFragment.isBuildAboveJellyBean;
 
 
 public class PicturesCursorAdapter extends CursorAdapter<PicturesCursorAdapter.PicturesViewHolder> {
@@ -45,6 +48,25 @@ public class PicturesCursorAdapter extends CursorAdapter<PicturesCursorAdapter.P
                 .load(cursor.getString(0))
 //                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(holder.pictureImageView);
+        int media_type;
+        try{
+            if(isBuildAboveJellyBean()){
+                media_type=cursor.getInt(7);
+
+            }else{
+                media_type=cursor.getInt(5);
+            }
+            if(media_type==3){
+                holder.imageButton.setVisibility(View.VISIBLE);
+            }else{
+                holder.imageButton.setVisibility(View.GONE);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+
+
 
 
         holder.pictureImageView.setOnClickListener(new View.OnClickListener() {
@@ -150,13 +172,14 @@ public class PicturesCursorAdapter extends CursorAdapter<PicturesCursorAdapter.P
 
     public static class PicturesViewHolder extends RecyclerView.ViewHolder{
         ImageView pictureImageView;
-
+        ImageButton imageButton;
         FrameLayout frameLayout;
         PicturesAdapter picturesAdapter;
         public PicturesViewHolder(@NonNull View itemView) {
             super(itemView);
             pictureImageView=itemView.findViewById(R.id.picture_image_view);
             frameLayout=itemView.findViewById(R.id.image_container);
+            imageButton=itemView.findViewById(R.id.play_button_picture_item);
 //            itemView.setOnClickListener(this);
 //            picturesAdapter=mPicturesAdapter;
 //            itemView.setOnCreateContextMenuListener(this);

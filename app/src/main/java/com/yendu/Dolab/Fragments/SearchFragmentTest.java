@@ -1,6 +1,7 @@
 package com.yendu.Dolab.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -9,11 +10,14 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -26,6 +30,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.yendu.Dolab.BuildConfig;
 import com.yendu.Dolab.Models.PictureModel;
 import com.yendu.Dolab.R;
 import com.yendu.Dolab.RecyclerViewPagerImageIndicator2;
@@ -33,6 +38,7 @@ import com.yendu.Dolab.interfaces.iQueryListener;
 import com.yendu.Dolab.interfaces.imageIndicatorListener;
 import com.yendu.Dolab.recyclerViewPagerImageIndicator;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -65,6 +71,7 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
         this.cursor=cursor;
         this.position=imagePosition;
         this.context=context;
+        this.previousSelcected=imagePosition;
 //        this.pictureModelListForStart=allImages;
 
     }
@@ -217,7 +224,10 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 //            String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME};
-            String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE};
+           // String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE,MediaStore.Files.FileColumns.MEDIA_TYPE};
+        String[] projection={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.TITLE,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
+        String[] projection2={MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.TITLE,MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
+
 
         if (args != null) {
                 String s = args.getString("SEARCHWORDS");
@@ -252,7 +262,14 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
 //
 
                 order = "CASE WHEN _display_name ='" + s + "' THEN 0 WHEN _display_name LIKE '" + s + "%" + "' THEN 1 WHEN _display_name LIKE '" + "%" + s + "%" + "' THEN 2 WHEN _display_name LIKE '" + "%" + s + "' THEN 3 ELSE 4 END, _display_name DESC";
-                return new CursorLoader(getContext(), images, projection, "("+selectionn+") AND ("+selection.toString()+")", argss, order);
+               // return new CursorLoader(getContext(), images, projection, "("+selectionn+") AND ("+selection.toString()+")", argss, order);
+                if(Build.VERSION.SDK_INT>Build.VERSION_CODES.JELLY_BEAN){
+                    return new CursorLoader(getContext(), images, projection, "("+selectionn+") AND ("+selection.toString()+")", argss, order);
+
+                }else{
+                    return new CursorLoader(getContext(), images, projection2, "("+selectionn+") AND ("+selection.toString()+")", argss, order);
+
+                }
 //            return new CursorLoader(getContext(), images, projection, selection.toString(), argss, order);
 
         } else {
@@ -302,8 +319,9 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
 //        this.pictureModelList=this.pictureModelListForStart;
 //    }
 
-    public class ImagesPager extends PagerAdapter{
+    public class ImagesPager extends PagerAdapter implements View.OnClickListener{
 
+        public ImageButton playButton;
         @Override
         public int getCount() {
             try {
@@ -336,7 +354,22 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
             View view=layoutInflater.inflate(R.layout.search_result_pager,null);
             imageViewOfSelected=view.findViewById(R.id.search_result_imageView);
             textViewOfSelected=view.findViewById(R.id.image_name_search_result_pager);
+            playButton=view.findViewById(R.id.play_button_search_result_pager);
+            playButton.setOnClickListener(this);
             cursor.moveToPosition(position);
+            int media_type;
+            if(Build.VERSION.SDK_INT>Build.VERSION_CODES.JELLY_BEAN){
+                media_type=cursor.getInt(7);
+            }else{
+                media_type=cursor.getInt(5);
+            }
+            if(media_type==3){
+                playButton.setVisibility(View.VISIBLE);
+            }else{
+                playButton.setVisibility(View.GONE);
+            }
+
+
 //            PictureModel pictureModel=pictureModelList.get(position);
             textViewOfSelected.setText(cursor.getString(1));
             Glide.with(context)
@@ -384,5 +417,22 @@ public class SearchFragmentTest extends Fragment implements imageIndicatorListen
         }
 
 
+        @Override
+        public void onClick(View v) {
+            if(v.getId()==R.id.play_button_search_result_pager){
+
+                Toast.makeText(getContext(),"inside",Toast.LENGTH_LONG).show();
+                cursor.moveToPosition(previousSelcected);
+                Uri uri= FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID,new File(cursor.getString(0)));
+                // intent1.putExtra(Intent.EXTRA_STREAM,uri);
+                Intent intent1=new Intent(Intent.ACTION_VIEW,uri);
+                intent1.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                intent1.setDataAndType(uri,"video/*");
+                startActivity(Intent.createChooser(intent1,"Select"));
+            }
+            Toast.makeText(getContext(),"outside",Toast.LENGTH_LONG).show();
+
+        }
     }
 }

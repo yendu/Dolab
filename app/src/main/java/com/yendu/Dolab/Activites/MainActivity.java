@@ -1,8 +1,6 @@
 package com.yendu.Dolab.Activites;
 
-//import android.app.AlertDialog;
-//
-//import android.content.DialogInterface;
+
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-//import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 
@@ -29,29 +26,19 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-//import androidx.loader.app.LoaderManager;
-
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 //import com.google.firebase.analytics.FirebaseAnalytics;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.yendu.Dolab.Adapters.AlbumsCursorAdapter;
 import com.yendu.Dolab.Adapters.SpinnerAdapter;
 import com.yendu.Dolab.Fragments.AlbumFragment;
 import com.yendu.Dolab.Fragments.PictureFragment;
-import com.yendu.Dolab.Fragments.SearchFragment;
 import com.yendu.Dolab.Fragments.SearchFragmentTest;
-import com.yendu.Dolab.Models.AlbumModel;
-import com.yendu.Dolab.Models.PictureModel;
 import com.yendu.Dolab.R;
 //import com.yendu.Dolab.Utils.ContentLoaderUtils;
 import com.yendu.Dolab.Utils.LocaleHelper;
 import com.yendu.Dolab.interfaces.IonBackPressed;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -70,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private boolean checkChangeOfSort=false;
     private boolean fromVoice=false;
     String query=null;
+    public static int SELECTEDLANGUAGEINDEX=0;
 //    boolean isSearchViewOpen=false;
 
 

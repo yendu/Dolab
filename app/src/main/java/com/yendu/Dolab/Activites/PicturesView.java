@@ -218,10 +218,10 @@ public class PicturesView extends AppCompatActivity implements itemClickListener
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
-            String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
+            String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DISPLAY_NAME, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
         return new CursorLoader(this,uri, projection, "("+selection+") AND ("+MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?)", new String[]{bucketName},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
         }else{
-            String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
+            String[] projection={MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DISPLAY_NAME, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
             return new CursorLoader(this,uri, projection, "("+selection+") AND ("+MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?)",new String[]{bucketName}, MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
         }
 

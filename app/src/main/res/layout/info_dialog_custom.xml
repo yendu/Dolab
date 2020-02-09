@@ -32,7 +32,7 @@
                 android:id="@+id/title_info_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:text="@string/title"
                 android:textSize="18sp"
                 android:layout_marginRight="3dp"
@@ -42,7 +42,7 @@
                 android:id="@+id/title_info_dialog_real"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:textSize="18sp"
                 />
 
@@ -57,7 +57,7 @@
                 android:id="@+id/time_info_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:text="@string/time"
                 android:textSize="18sp"
                 android:layout_marginRight="3dp"
@@ -67,7 +67,7 @@
                 android:id="@+id/time_info_dialog_real"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:textSize="18sp"
                 />
 
@@ -82,7 +82,7 @@
                 android:id="@+id/width_info_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:text="@string/width"
                 android:textSize="18sp"
                 android:layout_marginRight="3dp"
@@ -92,7 +92,7 @@
                 android:id="@+id/width_info_dialog_real"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:textSize="18sp"
                 />
 
@@ -107,7 +107,7 @@
                 android:id="@+id/height_info_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:text="@string/height"
                 android:textSize="18sp"
                 android:layout_marginRight="3dp"
@@ -117,7 +117,7 @@
                 android:id="@+id/height_info_dialog_real"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:textSize="18sp"
                 />
 
@@ -132,7 +132,7 @@
                 android:id="@+id/size_info_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:text="@string/size"
                 android:textSize="18sp"
                 android:layout_marginRight="3dp"
@@ -142,7 +142,7 @@
                 android:id="@+id/size_info_dialog_real"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:textSize="18sp"
                 />
 
@@ -159,6 +159,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/path"
                 android:textSize="18sp"
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:layout_marginRight="3dp"
                 android:layout_marginEnd="3dp" />
 
@@ -166,7 +167,7 @@
                 android:id="@+id/path_info_dialog_real"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                 android:textSize="18sp"
 
                 />

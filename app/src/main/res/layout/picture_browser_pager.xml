@@ -2,10 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container_picture_browser_pager"
     android:clickable="true"
-    android:focusable="true"
-   >
+    android:focusable="true">
 
 <!--    <ImageView-->
 <!--        android:layout_width="match_parent"-->
@@ -16,6 +16,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/image_browser_pager"/>
+    <ImageButton
+        android:id="@+id/play_button_picture_browser_pager"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_play_circle_filled_black_24dp"
+        />
 <!--       <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView-->
 <!--           android:layout_width="match_parent"-->
 <!--           android:layout_height="match_parent"-->
@@ -34,6 +42,97 @@
 <!--        />-->
     <!--android:transitionName="picture"
     tools:ignore="ContentDescription,UnusedAttribute"-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottom_app_bar"
+        android:paddingHorizontal="50dp"
+        android:paddingRight="50dp"
+        android:paddingLeft="50dp"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:visibility="gone"
+        app:buttonGravity="center_vertical"
+        android:layout_alignParentBottom="true"
+        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+        android:background="@android:color/transparent"
+        android:animateLayoutChanges="true"
+
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp">
+        <ImageButton
+            android:id="@+id/delete_image_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:alpha="0.5"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_delete_white_24dp"
+            android:layout_weight="1"
+
+
+
+            />
+        <ImageButton
+            android:id="@+id/info_image_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:alpha="0.5"
+
+            android:background="@android:color/transparent"
+
+            android:src="@drawable/ic_info_outline_white_24dp"
+            android:layout_weight="1"
+
+
+            />
+<!--        <Button-->
+<!--            android:id="@+id/info_image_button"-->
+<!--            android:layout_width="36dp"-->
+<!--            android:layout_height="16dp"-->
+<!--            android:drawablePadding="@drawable/ic_info_outline_white_24dp"-->
+<!--            android:ic-->
+<!--            android:layout_weight="1"-->
+
+<!--            />-->
+        <ImageButton
+            android:id="@+id/edit_image_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:alpha="0.5"
+
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_mode_edit_white_24dp"
+            android:layout_weight="1"
+
+            />
+        <ImageButton
+            android:id="@+id/wallpaper_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_wallpaper_black_24dp"
+            android:layout_weight="1"
+
+            />
+        <ImageButton
+            android:id="@+id/share_image_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:alpha="0.5"
+
+            android:src="@drawable/ic_share_white_24dp"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+    </LinearLayout>
 
 
 </RelativeLayout>

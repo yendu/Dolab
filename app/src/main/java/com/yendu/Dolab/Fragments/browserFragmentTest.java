@@ -17,15 +17,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-//import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
@@ -50,32 +51,32 @@ import java.io.File;
 //import java.util.List;
 import static androidx.core.view.ViewCompat.setTransitionName;
 import static com.yendu.Dolab.Activites.PicturesView.bucketName;
+import static com.yendu.Dolab.Fragments.PictureFragment.isBuildAboveJellyBean;
 import static com.yendu.Dolab.Utils.ContentLoaderUtils.DATEFORMAT;
 import static com.yendu.Dolab.Utils.ContentLoaderUtils.calculateSize;
 import static com.yendu.Dolab.Utils.ContentLoaderUtils.convertDate;
 
-public class browserFragmentTest extends Fragment implements View.OnClickListener , LoaderManager.LoaderCallbacks<Cursor> {
+public class browserFragmentTest extends Fragment implements /* View.OnClickListener ,*/ LoaderManager.LoaderCallbacks<Cursor> {
 
 
     private RelativeLayout relativeLayout;
     private Context context;
     public Cursor cursor;
     //    ImageView imageView;
-    PhotoView imageView;
-
+    private PhotoView imageView;
     private PicturesPagerAdapter picturesPagerAdapter;
     private int currentPosition;
     private int previousSelected;
     private PhotoViewAttacher photoViewAttacher;
+    private CoordinatorLayout frameLayout;
 
     private hackedViewPager viewPager;
     private boolean checkBottomAppBar=true;
     private  BottomNavigationView bottomNavigationView;
-    private LinearLayout bottomAppBar;
+   // private LinearLayout bottomAppBar;
     private View view;
     private boolean checkActionBar=false;
     private RelativeLayout relativeLayoutPicBrowPager;
-    private ImageView shareButton,wallpaperButton,deleteButton,editButton,infoButton;
     private boolean isZoomed;
 //    public PictureModel pictureModel1;
     private boolean firstTimeLoaded=false;
@@ -101,13 +102,12 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
     }
 
     public static browserFragmentTest newInstance(Cursor cursor,Context context, int imagePosition){
-        browserFragmentTest broFragment=new browserFragmentTest(cursor,context,imagePosition);
+        return new browserFragmentTest(cursor,context,imagePosition);
 //        Toast.makeText(context,context.getClass().getName(),Toast.LENGTH_SHORT).show();
-        return broFragment;
+
     }
-    public static browserFragmentTest newInstance(Cursor cursor,Context context,int imagePosition,String searchQuery){
-        browserFragmentTest browserFragmentTest=new browserFragmentTest(cursor,context,imagePosition,searchQuery);
-        return browserFragmentTest;
+    public static browserFragmentTest newInstance(Cursor cursor,Context context,int imagePosition,String searchQuery) {
+        return new browserFragmentTest(cursor, context, imagePosition, searchQuery);
     }
 
     @Nullable
@@ -137,27 +137,28 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewPager=view.findViewById(R.id.imagePager);
-        shareButton=view.findViewById(R.id.share_image_button);
-        wallpaperButton=view.findViewById(R.id.wallpaper_image_button);
-        editButton=view.findViewById(R.id.edit_image_button);
-        infoButton=view.findViewById(R.id.info_image_button);
-        deleteButton=view.findViewById(R.id.delete_image_button);
-        editButton.setOnClickListener(this);
-        shareButton.setOnClickListener(this);
-        deleteButton.setOnClickListener(this);
-        infoButton.setOnClickListener(this);
-        wallpaperButton.setOnClickListener(this);
+//        shareButton=view.findViewById(R.id.share_image_button);
+//        wallpaperButton=view.findViewById(R.id.wallpaper_image_button);
+//        editButton=view.findViewById(R.id.edit_image_button);
+//        infoButton=view.findViewById(R.id.info_image_button);
+//        deleteButton=view.findViewById(R.id.delete_image_button);
+//        editButton.setOnClickListener(this);
+//        shareButton.setOnClickListener(this);
+//        deleteButton.setOnClickListener(this);
+//        infoButton.setOnClickListener(this);
+//        wallpaperButton.setOnClickListener(this);
         relativeLayout=getActivity().findViewById(R.id.main_activity_relativeLayout);
         bottomNavigationView=getActivity().findViewById(R.id.bottom_navigation);
         cursor.moveToPosition(currentPosition);
         picturesPagerAdapter=new PicturesPagerAdapter();
         viewPager.setAdapter(picturesPagerAdapter);
+       // frameLayout=view.findViewById(R.id.picture_browser_container);
 
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(1);
         viewPager.setCurrentItem(currentPosition);
         previousSelected=currentPosition;
 
-        bottomAppBar=view.findViewById(R.id.bottom_app_bar);
+        //bottomAppBar=view.findViewById(R.id.bottom_app_bar);
 
         if(((AppCompatActivity)getActivity()).getSupportActionBar().isShowing()){
             ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
@@ -198,6 +199,10 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
                     picturesPagerAdapter.notifyDataSetChanged();
 
                 }
+//                Toast.makeText(getContext(),"here it is ",Toast.LENGTH_LONG).show();
+//                makeBottomAppBarVisible();
+             //   makeBottomAppBarGone();
+
 
             }
 
@@ -208,14 +213,23 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
         });
 
 
-
-
     }
 
     public void share(){
         Intent intent=new Intent(Intent.ACTION_SEND);
-        intent.setType("image/*");
+       // intent.setType("image/*");
         cursor.moveToPosition(currentPosition);
+        int media_type;
+        if(Build.VERSION.SDK_INT>Build.VERSION_CODES.JELLY_BEAN){
+            media_type=cursor.getInt(7);
+        }else{
+            media_type=cursor.getInt(5);
+        }
+        if(media_type==3){
+            intent.setType("video/*");
+        }else{
+            intent.setType("image/*");
+        }
         Uri uri=FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID,new File(cursor.getString(0)));
         intent.putExtra(Intent.EXTRA_STREAM,uri);
         startActivity(Intent.createChooser(intent,"Select"));
@@ -264,79 +278,93 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
 
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.share_image_button:
-                share();
-                break;
-            case R.id.edit_image_button:
-                editImage();
-                break;
-            case R.id.wallpaper_image_button:
-                cursor.moveToPosition(currentPosition);
-                new SetWallpaperAsyncTask(getContext(),cursor.getString(0)).execute();
-                break;
-            case R.id.delete_image_button:
-                AlertDialog.Builder alertBuilder=new AlertDialog.Builder(getContext());
-                alertBuilder.setMessage("Delete selected item");
-
-
-                alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-//                                File tobeDelete=new File(pictureModels.get(currentPosition).getPath());
-                                cursor.moveToPosition(currentPosition);
-                                File tobeDelete=new File(cursor.getString(0));
-//                                Log.d("SizeOfCursor",String.valueOf(cursor.getCount()));
-                                ContentLoaderUtils.deleteFile(tobeDelete,getContext());
-//                                Log.d("SizeOfCursor",String.valueOf(cursor.getCount()));
-
-                                if(cursor.getPosition()==cursor.getCount()-1){
-                                    if(cursor.getCount()>0){
-                                        cursor.moveToPosition(cursor.getCount()-1);
-
-                                        currentPosition=cursor.getPosition();
-                                    }else{
-//                                        getActivity().finish();
-//                                         onDestroy();
-//                                        getActivity().onBackPressed();
-
-                                    }
-
-                                }else{
-                                    cursor.moveToPosition(currentPosition);
-                                    Log.d("SizeOfCursor",String.valueOf(cursor.getPosition()));
-                                }
-
-                                picturesPagerAdapter.notifyDataSetChanged();
-
-                                viewPager.setCurrentItem(currentPosition,true);
-
-
-
-                            }
-
-                        }
-                );
-                alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alertBuilder.create().show();
-
-
-
-                break;
-            case R.id.info_image_button:
-                showInfo();
-
-                break;
-        }
-    }
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()){
+//            case R.id.share_image_button:
+//                share();
+//                break;
+//            case R.id.edit_image_button:
+//                editImage();
+//                break;
+//            case R.id.wallpaper_image_button:
+//                cursor.moveToPosition(currentPosition);
+//                new SetWallpaperAsyncTask(getContext(),cursor.getString(0)).execute();
+//                break;
+//            case R.id.delete_image_button:
+//                AlertDialog.Builder alertBuilder=new AlertDialog.Builder(getContext());
+//                alertBuilder.setMessage("Delete selected item");
+//
+//
+//                alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+////                                File tobeDelete=new File(pictureModels.get(currentPosition).getPath());
+//                                cursor.moveToPosition(currentPosition);
+//                                File tobeDelete=new File(cursor.getString(0));
+////                                Log.d("SizeOfCursor",String.valueOf(cursor.getCount()));
+//                                ContentLoaderUtils.deleteFile(tobeDelete,getContext());
+////                                Log.d("SizeOfCursor",String.valueOf(cursor.getCount()));
+//
+//                                int media_type;
+//                                if(isBuildAboveJellyBean()){
+//                                    media_type=cursor.getInt(7);
+//                                }else{
+//                                    media_type=cursor.getInt(5);
+//                                }
+//
+//
+//                                if(media_type==1){
+//                                    ContentLoaderUtils.deleteFile(tobeDelete, getContext());
+//
+//                                }else{
+//                                    ContentLoaderUtils.deleteVideo(tobeDelete,getContext());
+//                                }
+//                                if(cursor.getPosition()==cursor.getCount()-1){
+//                                    if(cursor.getCount()>0){
+//                                        cursor.moveToPosition(cursor.getCount()-1);
+//
+//                                        currentPosition=cursor.getPosition();
+//                                    }else{
+////                                        getActivity().finish();
+////                                         onDestroy();
+////                                        getActivity().onBackPressed();
+//
+//                                    }
+//
+//                                }else{
+//                                    cursor.moveToPosition(currentPosition);
+//                                    Log.d("SizeOfCursor",String.valueOf(cursor.getPosition()));
+//                                }
+//
+//                                picturesPagerAdapter.notifyDataSetChanged();
+//
+//                                viewPager.setCurrentItem(currentPosition,true);
+//
+//
+//
+//                            }
+//
+//                        }
+//                );
+//                alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//                alertBuilder.create().show();
+//
+//
+//
+//                break;
+//            case R.id.info_image_button:
+//                showInfo();
+//
+//                break;
+//        }
+//    }
     private void editImage(){
 
         cursor.moveToPosition(currentPosition);
@@ -412,7 +440,7 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
               // Uri images=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                Uri images=MediaStore.Files.getContentUri("external");
               // String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
-               String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT};
+               String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.WIDTH,MediaStore.Files.FileColumns.HEIGHT,MediaStore.Files.FileColumns.MEDIA_TYPE};
 
                String[] splited = query.split("\\s+");
                StringBuilder selectionn = new StringBuilder();
@@ -444,7 +472,7 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
 //               return new CursorLoader(context,uri, projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME+" = ?", new String[]{bucketName},MediaStore.Images.ImageColumns.DATE_TAKEN+" DESC");
            }else{
               // String[] projection={MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,};
-               String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE};
+               String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,MediaStore.Files.FileColumns.DATE_TAKEN,MediaStore.Files.FileColumns.SIZE,MediaStore.Files.FileColumns.MEDIA_TYPE};
                 Uri images=MediaStore.Files.getContentUri("external");
              //  Uri images=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 //               String[] projection = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN,MediaStore.Images.ImageColumns.SIZE,MediaStore.Images.ImageColumns.WIDTH,MediaStore.Images.ImageColumns.HEIGHT};
@@ -529,8 +557,9 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
     }
 
 
-    private class PicturesPagerAdapter extends PagerAdapter{
+    private class PicturesPagerAdapter extends PagerAdapter implements View.OnClickListener{
         int positionOfCurrentItem;
+        private ImageView shareButton,wallpaperButton,deleteButton,editButton,infoButton;
         @Override
         public int getCount() {
             try{
@@ -557,29 +586,101 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
             super.notifyDataSetChanged();
         }
 
+        private void makeBottomAppBarGone(final LinearLayout bottomAppBar){
+            bottomAppBar.animate().alpha(0).setDuration(300).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    bottomAppBar.setVisibility(View.GONE);
+
+                }
+            });
+
+        }
+        private void makeBottomAppBarVisible(final LinearLayout bottomAppBar){
+            bottomAppBar.animate().alpha(1).setDuration(300).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    bottomAppBar.setVisibility(View.VISIBLE);
+                    //checkBottomAppBar=false;
+                }
+            });
+
+
+        }
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            final LinearLayout bottomAppBar;
+            ImageButton imageButton;
+
             LayoutInflater layoutInflater=(LayoutInflater)container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view=layoutInflater.inflate(R.layout.picture_browser_pager,null);
             imageView=view.findViewById(R.id.image_browser_pager);
+            shareButton=view.findViewById(R.id.share_image_button);
+            deleteButton=view.findViewById(R.id.delete_image_button);
+            wallpaperButton=view.findViewById(R.id.wallpaper_image_button);
+            infoButton=view.findViewById(R.id.info_image_button);
+            editButton=view.findViewById(R.id.edit_image_button);
+            bottomAppBar=view.findViewById(R.id.bottom_app_bar);
+            shareButton.setOnClickListener(this);
+            deleteButton.setOnClickListener(this);
+            infoButton.setOnClickListener(this);
             photoViewAttacher=new PhotoViewAttacher(imageView);
+            imageButton=view.findViewById(R.id.play_button_picture_browser_pager);
+            imageButton.setOnClickListener(this);
             relativeLayoutPicBrowPager=view.findViewById(R.id.container_picture_browser_pager);
+           // bottomAppBar.setVisibility(View.GONE);
 //            photoViewAttacher=new PhotoViewAttacher(imageView);
+            int media_type;
+            cursor.moveToPosition(position);
 
-            relativeLayoutPicBrowPager.setOnClickListener(new View.OnClickListener() {
+
+//            if(query!=null){
+//                media_type=cursor.getInt(2);
+//            }else{
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
+                    media_type=cursor.getInt(7);
+                }else{
+                    media_type=cursor.getInt(5);
+                }
+//            }
+
+
+            if(media_type==3){
+                imageButton.setVisibility(View.VISIBLE);
+                editButton.setOnClickListener(null);
+                wallpaperButton.setOnClickListener(null);
+                wallpaperButton.setImageAlpha(100);
+                editButton.setImageAlpha(100);}
+//            }else{
+//                imageButton.setVisibility(View.GONE);
+//                editButton.setOnClickListener(this);
+//                wallpaperButton.setOnClickListener(this);
+//                wallpaperButton.setImageAlpha(1000);
+//                editButton.setImageAlpha(1000);
+//            }
+
+            photoViewAttacher.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                    checkBottomAppBar=true;
+                 ///  Toast.makeText(getContext(),"here it is ",Toast.LENGTH_LONG).show();
+                //  View view= viewPager.findViewWithTag(viewPager.getCurrentItem());
+
+                  // bottomAppBar.setVisibility(View.GONE);
+                //   view..setVisibility(View.GONE);
                     if(checkBottomAppBar){
-                        makeBottomAppBarVisible();
+                        makeBottomAppBarVisible(bottomAppBar);
+                      //  bottomAppBar.setVisibility(View.VISIBLE);
                         checkBottomAppBar=false;
                     }else{
-                        makeBottomAppBarGone();
+                        makeBottomAppBarGone(bottomAppBar);
                         checkBottomAppBar=true;
                     }
-//                    makeBottomAppBarVisible();
-//                    new Handler().postDelayed(visibility,4000);
+////                    makeBottomAppBarVisible();
+////                    new Handler().postDelayed(visibility,4000);
                 }
             });
 
@@ -599,14 +700,12 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
             setTransitionName(imageView,String.valueOf(position)+"_image");
 //            PictureModel pictureModel=pictureModels.get(position);
 //            currentPosition=position;
-            cursor.moveToPosition(position);
 
 //
 
             Glide.with(context)
 //                    .asBitmap()
                     .load(cursor.getString(0))
-
                     .apply(new RequestOptions().fitCenter())
 //                    .into(imageView);
                     .into(imageView);
@@ -631,32 +730,110 @@ public class browserFragmentTest extends Fragment implements View.OnClickListene
                 return POSITION_NONE;
 
         }
+        private void openVideo(){
+           // intent1.setType("video/*");
+            cursor.moveToPosition(currentPosition);
+            Uri uri=FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID,new File(cursor.getString(0)));
+           // intent1.putExtra(Intent.EXTRA_STREAM,uri);
+            Intent intent1=new Intent(Intent.ACTION_VIEW,uri);
+            intent1.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-    }
+            intent1.setDataAndType(uri,"video/*");
+            startActivity(Intent.createChooser(intent1,"Select"));
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.share_image_button:
+                    share();
+                    break;
+                case R.id.edit_image_button:
+                    editImage();
+                    break;
+                case R.id.play_button_picture_browser_pager:
+                    openVideo();
+                    break;
+                case R.id.wallpaper_image_button:
+                    cursor.moveToPosition(currentPosition);
+                    new SetWallpaperAsyncTask(getContext(), cursor.getString(0)).execute();
+                    break;
+                case R.id.delete_image_button:
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+                    alertBuilder.setMessage("Delete selected item");
 
 
+                    alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+//                                File tobeDelete=new File(pictureModels.get(currentPosition).getPath());
+                                    cursor.moveToPosition(currentPosition);
+                                    File tobeDelete = new File(cursor.getString(0));
+//                                Log.d("SizeOfCursor",String.valueOf(cursor.getCount()));
+                                    ContentLoaderUtils.deleteFile(tobeDelete, getContext());
+//                                Log.d("SizeOfCursor",String.valueOf(cursor.getCount()));
+
+                                    int media_type;
+                                    if (isBuildAboveJellyBean()) {
+                                        media_type = cursor.getInt(7);
+                                    } else {
+                                        media_type = cursor.getInt(5);
+                                    }
 
 
-    private void makeBottomAppBarGone(){
-        bottomAppBar.animate().translationY(0).setDuration(300).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                bottomAppBar.setVisibility(View.GONE);
+                                    if (media_type == 1) {
+                                        ContentLoaderUtils.deleteFile(tobeDelete, getContext());
 
+                                    } else {
+                                        ContentLoaderUtils.deleteVideo(tobeDelete, getContext());
+                                    }
+                                    if (cursor.getPosition() == cursor.getCount() - 1) {
+                                        if (cursor.getCount() > 0) {
+                                            cursor.moveToPosition(cursor.getCount() - 1);
+
+                                            currentPosition = cursor.getPosition();
+                                        } else {
+//                                        getActivity().finish();
+//                                         onDestroy();
+//                                        getActivity().onBackPressed();
+
+                                        }
+
+                                    } else {
+                                        cursor.moveToPosition(currentPosition);
+                                        Log.d("SizeOfCursor", String.valueOf(cursor.getPosition()));
+                                    }
+
+                                    picturesPagerAdapter.notifyDataSetChanged();
+
+                                    viewPager.setCurrentItem(currentPosition, true);
+
+
+                                }
+
+                            }
+                    );
+                    alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alertBuilder.create().show();
+
+
+                    break;
+                case R.id.info_image_button:
+                    showInfo();
+
+                    break;
             }
-        });
-    }
-    private void makeBottomAppBarVisible(){
-        bottomAppBar.animate().translationY(0).setDuration(300).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                bottomAppBar.setVisibility(View.VISIBLE);
-                checkBottomAppBar=false;
-            }
-        });
 
+        }
     }
+
+
 
 }

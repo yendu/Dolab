@@ -41,6 +41,7 @@ import androidx.recyclerview.widget.RecyclerView;
 //import com.crashlytics.android.Crashlytics;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 
+import com.yendu.Dolab.Activites.MainActivity;
 import com.yendu.Dolab.Adapters.AlbumsCursorAdapter;
 import com.yendu.Dolab.Adapters.SpinnerAdapter;
 
@@ -295,6 +296,7 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                 final Spinner spinner1 = ((Spinner) dialog1.findViewById(R.id.spinner_toolbar_dialog));
                 SpinnerAdapter spinnerAdapter1 = new SpinnerAdapter(getContext(), R.array.language, R.array.shortformlanguage);
                 spinner1.setAdapter(spinnerAdapter1);
+                spinner1.setSelection(MainActivity.SELECTEDLANGUAGEINDEX);
                 spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -302,21 +304,25 @@ public class AlbumFragment extends Fragment implements LoaderManager.LoaderCallb
                             case 0:
                                 LocaleHelper.setLocale(getContext(), "us");
                                 LANGUAGE = "us";
+                                MainActivity.SELECTEDLANGUAGEINDEX=0;
 //                        LocaleHelper.restart(MainActivity.this);
                                 break;
                             case 1:
                                 LocaleHelper.setLocale(getContext(), "vi");
                                 LANGUAGE = "vi";
+                                MainActivity.SELECTEDLANGUAGEINDEX=1;
 //                        LocaleHelper.restart(MainActivity.this);
                                 break;
                             case 2:
                                 LocaleHelper.setLocale(getContext(), "es");
                                 LANGUAGE = "es";
+                                MainActivity.SELECTEDLANGUAGEINDEX=2;
 //                        LocaleHelper.restart(MainActivity.this);
                                 break;
                             case 3:
                                 LocaleHelper.setLocale(getContext(), "zh");
                                 LANGUAGE = "zh";
+                                MainActivity.SELECTEDLANGUAGEINDEX=3;
 //                        LocaleHelper.restart(MainActivity.this);
 
                         }

@@ -33,7 +33,7 @@
                 android:id="@+id/title_info_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAppearance="@style/Widget.MaterialComponents.TextView"
                 android:text="@string/title"
                 android:textSize="20sp"
                 android:layout_marginRight="3dp"
@@ -58,6 +58,7 @@
                     android:id="@+id/time_info_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textAppearance="@style/Widget.MaterialComponents.TextView"
 
                     android:text="@string/time"
                     android:textSize="20sp"
@@ -83,6 +84,7 @@
                     android:id="@+id/width_info_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textAppearance="@style/Widget.MaterialComponents.TextView"
 
                     android:text="@string/width"
                     android:textSize="20sp"
@@ -108,6 +110,7 @@
                     android:id="@+id/height_info_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textAppearance="@style/Widget.MaterialComponents.TextView"
 
                     android:text="@string/height"
                     android:textSize="20sp"
@@ -133,6 +136,7 @@
                     android:id="@+id/size_info_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textAppearance="@style/Widget.MaterialComponents.TextView"
 
                     android:text="@string/size"
                     android:textSize="20sp"
@@ -158,6 +162,7 @@
                     android:id="@+id/path_info_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textAppearance="@style/Widget.MaterialComponents.TextView"
 
                     android:text="@string/path"
                     android:textSize="20sp"
