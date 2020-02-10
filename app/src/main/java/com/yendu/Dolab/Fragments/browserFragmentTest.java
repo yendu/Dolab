@@ -790,14 +790,16 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
                                         ContentLoaderUtils.deleteVideo(tobeDelete, getContext());
                                     }
                                     if (cursor.getPosition() == cursor.getCount() - 1) {
-                                        if (cursor.getCount() > 0) {
-                                            cursor.moveToPosition(cursor.getCount() - 1);
+                                        if (cursor.getCount() ==1) {
+                                            getActivity().onBackPressed();
+//                                            getActivity().onBackPressed();
 
-                                            currentPosition = cursor.getPosition();
                                         } else {
 //                                        getActivity().finish();
 //                                         onDestroy();
-//                                        getActivity().onBackPressed();
+                                            cursor.moveToPosition(cursor.getCount() - 1);
+
+                                            currentPosition = cursor.getPosition();
 
                                         }
 
