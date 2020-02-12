@@ -329,7 +329,7 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
 //                                    }else{
 ////                                        getActivity().finish();
 ////                                         onDestroy();
-////                                        getActivity().onBackPressed();
+////                                        getActivity().onbackpressed();
 //
 //                                    }
 //
@@ -792,7 +792,7 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
                                     if (cursor.getPosition() == cursor.getCount() - 1) {
                                         if (cursor.getCount() ==1) {
                                             getActivity().onBackPressed();
-//                                            getActivity().onBackPressed();
+//                                            getActivity().onbackpressed();
 
                                         } else {
 //                                        getActivity().finish();

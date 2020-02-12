@@ -483,10 +483,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
 
 
-//            super.onBackPressed();
+//            super.onbackpressed();
 
         }
-        if(!(pictureFragment instanceof IonBackPressed)|| !((IonBackPressed)pictureFragment).onBackPressed()){
+        if(!(pictureFragment instanceof IonBackPressed)|| !((IonBackPressed)pictureFragment).onbackpressed()){
             super.onBackPressed();
         }
 //

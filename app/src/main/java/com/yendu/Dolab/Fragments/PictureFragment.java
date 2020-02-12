@@ -76,7 +76,7 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
     private Menu menu;
     private ProgressBar progressBar;
     private File albumFolder;
-    private static String appname;
+    public static String appname;
     private FastScroller fastScroller;
     private AlertDialog alertDialog;
     private EditText editText1;
@@ -287,15 +287,15 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
                     public void onClick(View v) {
                         if(!editText1.getText().toString().isEmpty()){
                         if (createAlbum(editText1.getText().toString())) {
-                            if (picturesCursorAdapter.selectedList.size() == 1) {
-                                picturesCursorAdapter.cursor.moveToPosition(picturesCursorAdapter.selectedList.get(0));
-
-//                                   String des=ContentLoaderUtils.MoveFile(pictureModels.get(picturesAdapter.selectedList.get(0)).getPath(),albumFolder.getAbsolutePath());
-                                String des = ContentLoaderUtils.MoveFile(picturesCursorAdapter.cursor.getString(0), albumFolder.getAbsolutePath());
-                                updateMediaStore(getContext(),picturesCursorAdapter.cursor.getPosition(),albumFolder.getAbsolutePath());
-                                picturesCursorAdapter.selectedList.clear();
-                            }
-                            if (picturesCursorAdapter.selectedList.size() > 1) {
+//                            if (picturesCursorAdapter.selectedList.size() == 1) {
+//                                picturesCursorAdapter.cursor.moveToPosition(picturesCursorAdapter.selectedList.get(0));
+//
+////                                   String des=ContentLoaderUtils.MoveFile(pictureModels.get(picturesAdapter.selectedList.get(0)).getPath(),albumFolder.getAbsolutePath());
+//                                String des = ContentLoaderUtils.MoveFile(picturesCursorAdapter.cursor.getString(0), albumFolder.getAbsolutePath());
+//                                updateMediaStore(getContext(),picturesCursorAdapter.cursor.getPosition(),albumFolder.getAbsolutePath());
+//                                picturesCursorAdapter.selectedList.clear();
+//                            }
+                            if (picturesCursorAdapter.selectedList.size() >= 1) {
                                 MoveFile(picturesCursorAdapter.selectedList, albumFolder.getAbsolutePath());
 
                                 updateMediaStore(getContext(), picturesCursorAdapter.selectedList, albumFolder.getAbsolutePath());
@@ -314,6 +314,7 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
 
 
                             }
+                            picturesCursorAdapter.selected=false;
                             rebackToNormal();
                         }
 
@@ -389,29 +390,8 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
                 alertBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (picturesCursorAdapter.selectedList.size() == 1) {
-//                            File tobeDelete=new File(pictureModels.get(picturesCuAdapter.getPosition()).getPath());
-                            picturesCursorAdapter.cursor.moveToPosition(picturesCursorAdapter.selectedList.get(0));
-                            File tobeDeleted = new File(picturesCursorAdapter.cursor.getString(0));
-                            int media_type;
-                            if(isBuildAboveJellyBean()){
-                                media_type=picturesCursorAdapter.cursor.getInt(7);
-                            }else{
-                                media_type=picturesCursorAdapter.cursor.getInt(5);
-                            }
-                            if(media_type==1){
-                                ContentLoaderUtils.deleteFile(tobeDeleted, getContext());
 
-                            }else{
-                                ContentLoaderUtils.deleteVideo(tobeDeleted,getContext());
-                            }
-//                            picturesAdapter.pictureModelArrayList.remove(picturesAdapter.getPosition());
-//                            picturesAdapter.notifyDataSetChanged();
-                            rebackToNormal();
-                            picturesCursorAdapter.selected = false;
-                            picturesCursorAdapter.selectedList.clear();
-                        }
-                        if (picturesCursorAdapter.selectedList.size() > 1) {
+                        if (picturesCursorAdapter.selectedList.size() >=1) {
                             deleteFiles(picturesCursorAdapter.selectedList);
 //                            picturesAdapter.selectedList.remo
                             picturesCursorAdapter.selectedList.clear();
@@ -522,7 +502,7 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
                 try {
 
                     context.getContentResolver().update(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues, MediaStore.Video.VideoColumns.DATA + "='" + path + "'", null);
-                    context.getContentResolver().update(MediaStore.Files.getContentUri("external"), contentValues, MediaStore.Files.FileColumns.DATA + "='" + path + "'", null);
+                    context.getContentResolver().update(MediaStore.Files.getContentUri("external"), contentValues1, MediaStore.Files.FileColumns.DATA + "='" + path + "'", null);
 
 
                 } catch (Exception ex) {
@@ -620,7 +600,7 @@ public class PictureFragment extends Fragment implements itemClickListener, IonB
     }
 
     @Override
-    public boolean onBackPressed() {
+    public boolean onbackpressed() {
 
         if (picturesCursorAdapter != null) {
 
