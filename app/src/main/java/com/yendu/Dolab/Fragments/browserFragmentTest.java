@@ -81,6 +81,7 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
 //    public PictureModel pictureModel1;
     private boolean firstTimeLoaded=false;
     private String query=null;
+    public Uri wallpaperUri;
 //    private FloatingActionButton floatingActionButton;
 //    private Loader<Cursor>loader;
     public browserFragmentTest(){
@@ -235,7 +236,7 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
         startActivity(Intent.createChooser(intent,"Select"));
 
     }
-//    public void setWallpaper(){
+    public void setWallpaper(){
 //        WallpaperManager wallpaperManager=WallpaperManager.getInstance(getContext());
 //        try{
 //            Bitmap bitmap= BitmapFactory.decodeFile(pictureModels.get(currentPosition).getPath());
@@ -249,7 +250,16 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
 //            Toast.makeText(getContext(),"Error Setting Wallpaper",Toast.LENGTH_SHORT).show();
 //
 //        }
-//    }
+        cursor.moveToPosition(currentPosition);
+      //  Uri uri=FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID,new File(cursor.getString(0)));
+        wallpaperUri=FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID,new File(cursor.getString(0)));
+
+                Intent intent = new Intent(Intent.ACTION_ATTACH_DATA);
+        intent.setDataAndType(wallpaperUri, "image/*");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+       // intent.putExtra("jpg", "image/*");
+        startActivity(Intent.createChooser(intent, "Set as"));
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -627,6 +637,8 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
             shareButton.setOnClickListener(this);
             deleteButton.setOnClickListener(this);
             infoButton.setOnClickListener(this);
+            editButton.setOnClickListener(this);
+            wallpaperButton.setOnClickListener(this);
             photoViewAttacher=new PhotoViewAttacher(imageView);
             imageButton=view.findViewById(R.id.play_button_picture_browser_pager);
             imageButton.setOnClickListener(this);
@@ -756,8 +768,9 @@ public class browserFragmentTest extends Fragment implements /* View.OnClickList
                     openVideo();
                     break;
                 case R.id.wallpaper_image_button:
-                    cursor.moveToPosition(currentPosition);
-                    new SetWallpaperAsyncTask(getContext(), cursor.getString(0)).execute();
+                   // cursor.moveToPosition(currentPosition);
+                    //new SetWallpaperAsyncTask(getContext(), cursor.getString(0)).execute();
+                    setWallpaper();
                     break;
                 case R.id.delete_image_button:
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());

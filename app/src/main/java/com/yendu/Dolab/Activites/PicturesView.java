@@ -271,6 +271,7 @@ public class PicturesView extends AppCompatActivity implements itemClickListener
         getSupportFragmentManager()
 
                 .beginTransaction()
+                .setCustomAnimations()
 //                .addSharedElement(pictureHolder.pictureImageView,position+"picture")
                 .add(R.id.displayContainer,bowsFragment,"bowsFragment")
                 .addToBackStack(null)
