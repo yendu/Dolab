@@ -1,5 +1,6 @@
 package com.yendu.Dolab.Activites;
 
+import androidx.annotation.AnimRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +32,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -268,10 +271,13 @@ public class PicturesView extends AppCompatActivity implements itemClickListener
         if(materialSearchView.isSearchOpen()){
             materialSearchView.closeSearch();
         }
+       // Animation animation= AnimationUtils.loadAnimation(this,R.anim.pop_enter);
+
         getSupportFragmentManager()
 
                 .beginTransaction()
-                .setCustomAnimations()
+
+                .setCustomAnimations(R.anim.pop_enter,R.anim.pop_exit)
 //                .addSharedElement(pictureHolder.pictureImageView,position+"picture")
                 .add(R.id.displayContainer,bowsFragment,"bowsFragment")
                 .addToBackStack(null)
